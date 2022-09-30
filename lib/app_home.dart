@@ -1,8 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:android_flutter_first/domain.dart' as data;
-import 'package:android_flutter_first/customWidget.dart' as cw;
 
+// Test
+import 'package:android_flutter_first/test._dart.dart' as test;
+// App
+import 'package:android_flutter_first/app_util.dart' as util;
+import 'package:android_flutter_first/app_model.dart' as model;
+// App person
+import 'package:android_flutter_first/app_person_ui.dart' as personUI;
+import 'package:android_flutter_first/app_person_model.dart' as data;
+// App contact
+import 'package:android_flutter_first/app_contact.dart' as contact;
+import 'package:android_flutter_first/app_contact_model.dart' as contactModel;
+// App album
+import 'package:android_flutter_first/app_album.dart' as album;
+import 'package:android_flutter_first/app_album_model.dart' as albumModel;
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title}) : super(key: key);
@@ -14,6 +26,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  _HomePageState(){
+    _init_app_contact();
+  }
+
+  // Test data
+  final fNms = List<String>.generate(30, (i) => "Fname$i Lname$i");
+  final fAds = List<String>.generate(30, (i) => "10 Street$i City$i");
+
+  //List<service.Album> albums=[];
   List<data.Person> persons=[];
   int _counter = 0;
   int _selectedMenuItem = 0;
@@ -63,6 +84,9 @@ class _HomePageState extends State<HomePage> {
       //_addItemToList();
       _addOrEditPerson(context,data.Person('',''),data.Config(data.Config.METHOD_ADD));
     }
+    if(_selectedMenuItem==3){
+      test.mainTest(context);
+    }
   }
 
   @override
@@ -107,7 +131,7 @@ class _HomePageState extends State<HomePage> {
               child: Text('Flatter layout selector'),
             ),
             ListTile(
-              title: const Text('Grid'),
+              title: const Text('Layout | Grid'),
               onTap: () {
                 // Update the state of the app
                 // ...
@@ -119,7 +143,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              title: const Text('List view - Dynamically growing'),
+              title: const Text('Person | List view, Dynamically grow'),
               onTap: () {
                 setState(() {
                   _selectedMenuItem = 2;
@@ -128,7 +152,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              title: const Text('Widgets Fully Stretched'),
+              title: const Text('Layout | Widgets fully stretched'),
               onTap: () {
                 setState(() {
                   _selectedMenuItem = 3;
@@ -137,7 +161,26 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              title: const Text('Number incrementer'),
+              title: const Text('Album | Async http call'),
+              onTap: () {
+                setState(() {
+                  _selectedMenuItem = 4;
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Contact | configuration'),
+              onTap: () {
+                setState(() {
+                  _selectedMenuItem = 5;
+                });
+                Navigator.pop(context);
+              },
+            ),
+
+            ListTile(
+              title: const Text('Number incrementer | ..'),
               onTap: () {
                 setState(() {
                   _selectedMenuItem = 0;
@@ -165,6 +208,12 @@ class _HomePageState extends State<HomePage> {
     }
     else if (_selectedMenuItem == 3) {
       return _buildWidgetsFullyStretched();
+    }
+    else if (_selectedMenuItem == 4) {
+      return _buildAsyncFutureHttp();
+    }
+    else if (_selectedMenuItem == 5) {
+      return _app_contact_config();
     }
     else {
       return _buildNumberIncrementer();
@@ -267,7 +316,10 @@ class _HomePageState extends State<HomePage> {
         ],
       );
 
-  // 4. Build incremental list
+  ///////////////////////////////////////////////////
+  //  Person app | incremental list
+  ///////////////////////////////////////////////////
+
   Widget _buildIncrementalList() {
     return
       Center(
@@ -394,7 +446,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => cw.DetailScreen(person: person, config: config,),
+        builder: (context) => personUI.DetailScreen(person: person, config: config,),
       ),
     );
   }
@@ -406,7 +458,7 @@ class _HomePageState extends State<HomePage> {
     // Navigator.pop on the Selection Screen.
     final data.Result result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => cw.DetailScreen(person: person, config: config,) ),
+      MaterialPageRoute(builder: (context) => personUI.DetailScreen(person: person, config: config,) ),
     );
 
     // When a BuildContext is used from a StatefulWidget, the mounted property
@@ -428,7 +480,7 @@ class _HomePageState extends State<HomePage> {
 
     // After the Selection Screen returns a result, hide any previous snackbars
     // and show the new result.
-    cw.showSuccessSnackBar(context, ' Person $name successfully saved. ');
+    util.showSuccessSnackBar(context, ' Person $name successfully saved. ');
 
     // ScaffoldMessenger.of(context)
     //   ..removeCurrentSnackBar()
@@ -474,7 +526,7 @@ class _HomePageState extends State<HomePage> {
                 setState(() {
                   persons.removeAt(index);
                 });
-                cw.showSuccessSnackBar(context, ' Person $name successfully removed. ');
+                util.showSuccessSnackBar(context, ' Person $name successfully removed. ');
               },
               child: const Text('OK'),
             ),
@@ -484,6 +536,252 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  ///////////////////////////////////////////////////
+  //  Album app | Async http service call
+  ///////////////////////////////////////////////////
+  List<albumModel.Album> albums=[];
+
+  Widget _buildAsyncFutureHttp() => Scaffold(
+    backgroundColor: Color(0xFF222222),
+    body: Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _buildHeader('Async with Future<T> and HTTP'),
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          color: Colors.white,
+          alignment: Alignment.center,
+          child: Row( mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green,
+                    onPrimary: Colors.white,
+                    minimumSize: const Size(100, 40),
+                  ),
+                  onPressed: () {
+                    _httpGetAlbums();
+                  },
+                  child: const Text(
+                    'Fetch',
+                    //style: TextStyle(fontSize: 24),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.grey,
+                    onPrimary: Colors.black,
+                    minimumSize: const Size(100, 40),
+                  ),
+                  onPressed: () { _clearAlbums(); },
+                  child: const Text(
+                    'Clear',
+                    //style: TextStyle(fontSize: 24),
+                  ),
+                ),
+                const SizedBox(width: 10),
+              ]),
+        ),
+
+        DefaultTextStyle(
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: Text('Press buttons to do http and clear'),
+          ),
+          style: TextStyle(color: Colors.blue),
+        ),
+
+        Expanded(
+          child: Container(
+            color: Colors.white,
+            // child: Text('Bottom', textAlign: TextAlign.center),
+
+            child: ListView.builder(
+                itemCount: albums.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _tileAlum('${albums[index].title }' , '${albums[index].id}', Icons.album_outlined );
+                }
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  ListTile _tileAlum(String title, String subtitle, IconData icon) {
+    return ListTile(
+      title: Text(title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 20,
+          )),
+      subtitle: Text(subtitle),
+
+      leading: Icon(
+        icon,
+        color: Colors.blue[500],
+      ),
+      trailing: SizedBox(
+        width: 100,
+        child: Row(
+          children: [
+            //IconButton(onPressed: () {}, icon: const Icon(Icons.favorite)),
+            IconButton(onPressed:  () {}, icon: const Icon(Icons.edit)),
+            IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _httpGetAlbums() async{
+    albums = await album.fetchAlbum();
+    setState(() {
+    });
+  }
+
+  void _clearAlbums() async{
+    albums = [];
+    setState(() {
+    });
+  }
+
+  ///////////////////////////////////////////////////
+  //  Contacts app
+  ///////////////////////////////////////////////////
+  model.AppConfiguration appContactConfiguration=model.AppConfiguration();
+  final txtNameController = TextEditingController();
+  final txtPassController = TextEditingController();
+
+  void _init_app_contact(){
+    _app_contact_getCredentials();
+  }
+
+  void _app_contact_getCredentials() async {
+    appContactConfiguration = await util.AppUtil.getAppConfig();
+    txtNameController.text = appContactConfiguration.user ?? '';
+    txtPassController.text = appContactConfiguration.password ?? '';
+  }
+
+  Widget _app_contact_config() {
+    return Scaffold(
+      backgroundColor: Color(0xFF222222),
+      body: Column(
+
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _buildHeader('Contacts | Configuration'),
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            color: Colors.white,
+            alignment: Alignment.center,
+            child:
+            Column(
+                children: <Widget>[
+                  Text(
+                    "You can save your provider's credentials here",
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  TextField(
+                    controller: txtNameController,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'User',
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  TextField(
+                    controller: txtPassController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Password',
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+
+                ]
+            ),
+
+          ),
+
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: Row( mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green,
+                      onPrimary: Colors.white,
+                      minimumSize: const Size(100, 40),
+                    ),
+                    onPressed: () {
+                      _app_contact_saveCredentials();
+                    },
+                    child: const Text(
+                      'Save',
+                      //style: TextStyle(fontSize: 24),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // ElevatedButton(
+                  //   style: ElevatedButton.styleFrom(
+                  //     primary: Colors.grey,
+                  //     onPrimary: Colors.black,
+                  //     minimumSize: const Size(100, 40),
+                  //   ),
+                  //   onPressed: () { _clearAlbums(); },
+                  //   child: const Text(
+                  //     'Clear',
+                  //     //style: TextStyle(fontSize: 24),
+                  //   ),
+                  // ),
+                  const SizedBox(width: 10),
+                ]),
+          ),
+
+          Expanded(
+            child: Container(
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _app_contact_saveCredentials() async{
+    if ((txtNameController.text.isEmpty ?? true) ||
+        (txtPassController.text.isEmpty ?? true)) {
+      return;
+    }
+
+    model.AppConfiguration appConfiguration = model.AppConfiguration(
+      user: txtNameController.text, password: txtPassController.text
+    );
+
+    try {
+      await util.AppUtil.saveAppConfig(appConfiguration);
+      util.showSuccessSnackBar(context, 'Your credential details have been saved');
+    } catch (e) {
+      print(e);
+    }
+  }
 }
 
 // 2. Page Header
