@@ -1,25 +1,4 @@
 
-// class AppConfiguration{
-//   static final APP_CONFIG_KRY = 'app_config_aff';
-//
-//   String? user = '<user>';
-//   String? password = '<password>';
-//   String? apiKey = '<API-KEY>';
-//
-//   AppConfiguration({this.user,this.password, this.apiKey});
-//
-//   AppConfiguration.fromJson(Map<String, dynamic> jsonMap)
-//       : user = jsonMap['user'],
-//         password = jsonMap['password'],
-//         apiKey = jsonMap['apiKey'];
-//
-//   Map<String, dynamic> toJson() => {
-//     'user': user,
-//     'password': password,
-//     'apiKey': apiKey,
-//   };
-// }
-
 class Contact {
   String? id;
   String? fname;
@@ -39,7 +18,7 @@ class Contact {
     this.address,
   });
 
-  factory Contact.fromJson(Map<String, dynamic> jsonMap) {
+  factory Contact.fromJson(Map<String, dynamic> jsonMap, {String source='default'}) {
 
     Map<String, dynamic> addressMap = jsonMap['address'] ?? Map<String, dynamic>();
     List numbersIn = jsonMap['numbers'];
@@ -49,6 +28,22 @@ class Contact {
       Number number = Number.fromJson(element);
       numbersOut.add(number);
     });
+
+     if (source=='local'){
+       return Contact(
+           id: jsonMap['id'],
+           fname: jsonMap['fname'],
+           lname: jsonMap['lname'],
+           cpse: jsonMap['cpse'],
+           active: jsonMap['active'],
+           numbers: numbersOut,
+           address: Address(
+             no: addressMap['no'],
+             street: addressMap['street'],
+             city: addressMap['city'],
+           )
+       );
+     }
 
     return Contact(
         id: jsonMap['_id'].$oid,
@@ -66,7 +61,6 @@ class Contact {
   }
 
   Map<String, dynamic> toJson() => getContsctJson();
-
   Map<String, dynamic> getContsctJson(){
 
     List<Map<String, dynamic>> numbersJSON=[];
@@ -87,6 +81,7 @@ class Contact {
     };
 
     return {
+      'id': id,
       'fname': fname,
       'lname': lname,
       'cpse': cpse,
@@ -95,6 +90,20 @@ class Contact {
       'addres': addressMap
     };
   }
+
+  void saveNumber(String number, int index){
+    numbers[index].number = number;
+  }
+
+  void addNumber(Number number){
+    number.id = numbers.length.toString();
+    numbers.add(number);
+  }
+
+  void deleteNumber(int index){
+    numbers.removeAt(index);
+  }
+
 }
 
 class Number {

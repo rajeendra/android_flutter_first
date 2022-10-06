@@ -11,10 +11,10 @@ import 'package:android_flutter_first/app_person_ui.dart' as personUI;
 import 'package:android_flutter_first/app_person_model.dart' as data;
 // App contact
 import 'package:android_flutter_first/app_contact.dart' as contact;
-import 'package:android_flutter_first/app_contact_model.dart' as contactModel;
+import 'package:android_flutter_first/app_contact_model.dart' as modelContact;
 // App album
 import 'package:android_flutter_first/app_album.dart' as album;
-import 'package:android_flutter_first/app_album_model.dart' as albumModel;
+import 'package:android_flutter_first/app_album_model.dart' as modelAlbum;
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title}) : super(key: key);
@@ -25,9 +25,10 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
+
   _HomePageState(){
-    _init_app_contact();
+    _app_contact_init();
   }
 
   // Test data
@@ -42,10 +43,24 @@ class _HomePageState extends State<HomePage> {
   // final nameTxtController = TextEditingController();
   // final addressTxtController = TextEditingController();
 
+  late AnimationController controller;
+
+  @override
+  void initState() {
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..addListener(() {
+      setState(() {});
+    });
+    controller.repeat(reverse: false);
+    super.initState();
+  }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-
+    controller.dispose();
     // nameTxtController.dispose();
     // addressTxtController.dispose();
     super.dispose();
@@ -79,14 +94,19 @@ class _HomePageState extends State<HomePage> {
   void _onPressedFloatingActionButton() {
     if(_selectedMenuItem==0){
       _incrementCounter();
-    }
-    if(_selectedMenuItem==2){
-      //_addItemToList();
+    } else if(_selectedMenuItem==2){
       _addOrEditPerson(context,data.Person('',''),data.Config(data.Config.METHOD_ADD));
-    }
-    if(_selectedMenuItem==3){
+    } else if(_selectedMenuItem==3){
       test.mainTest(context);
+    } else if (_selectedMenuItem == 6) {
+      // At _app_contact
+      selectedContact = _app_contact_new_contact();
+      _app_contact_one_show(-1);
+    } else if(_selectedMenuItem==601){
+      // At _app_contact_one
+      _app_contact_number_show(-1);
     }
+
   }
 
   @override
@@ -136,6 +156,7 @@ class _HomePageState extends State<HomePage> {
                 // Update the state of the app
                 // ...
                 // Then close the drawer
+                // Then close the drawer
                 setState(() {
                   _selectedMenuItem = 1;
                 });
@@ -178,7 +199,17 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pop(context);
               },
             ),
-
+            ListTile(
+              title: const Text('Contact'),
+              onTap: () {
+                //setState(() {
+                  // setState() trigger after fetch the contacts
+                  _selectedMenuItem = 6;
+                //});
+                _mongoAtlas_contacts();
+                Navigator.pop(context);
+              },
+            ),
             ListTile(
               title: const Text('Number incrementer | ..'),
               onTap: () {
@@ -214,6 +245,21 @@ class _HomePageState extends State<HomePage> {
     }
     else if (_selectedMenuItem == 5) {
       return _app_contact_config();
+    }
+    else if (_selectedMenuItem == 6) {
+      return _app_contact();
+    }
+    else if (_selectedMenuItem == 601) {
+      return _app_contact_one();
+    }
+    else if (_selectedMenuItem == 602) {
+      return _app_contact_number();
+    }
+    else if (_selectedMenuItem == 61) {
+      return _app_contact_spinner();
+    }
+    else if (_selectedMenuItem == 999) {
+      return _app_Oops();
     }
     else {
       return _buildNumberIncrementer();
@@ -539,7 +585,7 @@ class _HomePageState extends State<HomePage> {
   ///////////////////////////////////////////////////
   //  Album app | Async http service call
   ///////////////////////////////////////////////////
-  List<albumModel.Album> albums=[];
+  List<modelAlbum.Album> albums=[];
 
   Widget _buildAsyncFutureHttp() => Scaffold(
     backgroundColor: Color(0xFF222222),
@@ -653,17 +699,76 @@ class _HomePageState extends State<HomePage> {
   ///////////////////////////////////////////////////
   //  Contacts app
   ///////////////////////////////////////////////////
+  List<modelContact.Contact> contacts = [];
+  List<modelContact.Contact> contactsCopy = [];
+  modelContact.Contact? selectedContact;
+  modelContact.Number? selectedNumber;
   model.AppConfiguration appContactConfiguration=model.AppConfiguration();
-  final txtNameController = TextEditingController();
-  final txtPassController = TextEditingController();
 
-  void _init_app_contact(){
+  final txtUserController  = TextEditingController();
+  final txtPassController = TextEditingController();
+  final txtSearchController = TextEditingController();
+
+  final txtFnameController = TextEditingController();
+  final txtLnameController = TextEditingController();
+  final txtLCpseController = TextEditingController();
+  bool activeContact = true;
+
+  final txtNumberController = TextEditingController();
+  bool isMobile = true;
+  bool isPersonal = true;
+
+  Widget _app_Oops() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _buildHeader('Contacts'),
+        Expanded(
+          child: Container(
+            color: Colors.white,
+            child: Center(
+                child:
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  //crossAxisAlignment: CrossAxisAlignment.stretch,
+
+                  children: <Widget>[
+                    Text('Oops!!!',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        //fontStyle: FontStyle.italic,
+                        fontSize: 30.0,
+                      ),
+                    ),
+                    Icon(
+                        Icons.error,
+                        size: 80.0,
+                        color: Colors.red
+                    ),
+                    Text('Something went wrong',
+                      style: TextStyle(
+                        //fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ],
+                )
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _app_contact_init(){
     _app_contact_getCredentials();
   }
 
   void _app_contact_getCredentials() async {
     appContactConfiguration = await util.AppUtil.getAppConfig();
-    txtNameController.text = appContactConfiguration.user ?? '';
+    txtUserController.text = appContactConfiguration.user ?? '';
     txtPassController.text = appContactConfiguration.password ?? '';
   }
 
@@ -690,7 +795,7 @@ class _HomePageState extends State<HomePage> {
                     height: 5,
                   ),
                   TextField(
-                    controller: txtNameController,
+                    controller: txtUserController,
                     obscureText: false,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
@@ -766,13 +871,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _app_contact_saveCredentials() async{
-    if ((txtNameController.text.isEmpty ?? true) ||
+    if ((txtUserController.text.isEmpty ?? true) ||
         (txtPassController.text.isEmpty ?? true)) {
       return;
     }
 
     model.AppConfiguration appConfiguration = model.AppConfiguration(
-      user: txtNameController.text, password: txtPassController.text
+      user: txtUserController.text, password: txtPassController.text
     );
 
     try {
@@ -782,6 +887,764 @@ class _HomePageState extends State<HomePage> {
       print(e);
     }
   }
+
+  void _mongoAtlas_contacts() async{
+    try {
+      _app_contact_spinner_show('Loading...');
+      contacts = await contact.findAllContacts();
+      contactsCopy = contacts.toList();
+      _app_contact_filter();
+      setState(() {
+        _selectedMenuItem = 6;
+      });
+      String count = contacts.length.toString();
+      util.showSuccessSnackBar(context, 'Success, $count contacts fetched');
+
+    } catch (e) {
+      util.showFailureSnackBar(context, 'Oh, Something has gone wrong');
+      setState(() {
+        _selectedMenuItem = 999;
+      });
+      print(e);
+    }
+  }
+
+  void _mongoAtlas_contact_save(modelContact.Contact oneContact) async{
+    try {
+      _app_contact_spinner_show('Saving...');
+      await contact.saveContact(oneContact);
+      contacts = await contact.findAllContacts();
+      contactsCopy = contacts.toList();
+      _app_contact_filter();
+      setState(() {
+        _selectedMenuItem = 601;
+      });
+      util.showSuccessSnackBar(context, 'Success, Save done.');
+
+    } catch (e) {
+      util.showFailureSnackBar(context, 'Oops! Save attempt failed.');
+      setState(() {
+        _selectedMenuItem = 999;
+      });
+      print(e);
+    }
+  }
+
+  void _mongoAtlas_contact_delete(String _id) async{
+    try {
+      _app_contact_spinner_show('Deleting...');
+      await contact.deleteContact(_id);
+      contacts = await contact.findAllContacts();
+      contactsCopy = contacts.toList();
+      setState(() {
+        _selectedMenuItem = 6;
+      });
+      util.showSuccessSnackBar(context, 'Success, Delete done.');
+
+    } catch (e) {
+      util.showFailureSnackBar(context, 'Oops! Delete attempt failed.');
+      setState(() {
+        _selectedMenuItem = 999;
+      });
+      print(e);
+    }
+  }
+
+  Widget _app_contact() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _buildHeader('Contacts'),
+        Container(
+          color: Colors.white,
+          child: Column(children: <Widget>[
+            const SizedBox(
+              height: 5,
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  // const SizedBox(
+                  //   width: 5,
+                  // ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    tooltip: 'Increase volume by 10',
+                    onPressed: () {_app_contact_filter_show();},
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Expanded(
+                    child: Container(
+                      color: Colors.white,
+                      // child: Text('Bottom', textAlign: TextAlign.center),
+
+                      child: TextField(
+                        controller: txtSearchController,
+                        //onChanged: (value) => filterContacts(value),
+                        obscureText: false,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Search',
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                ]),
+          ]),
+        ),
+        Expanded(
+          child: Container(
+            color: Colors.white,
+            // child: Text('Bottom', textAlign: TextAlign.center),
+
+            child: ListView.builder(
+                itemCount: contacts.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _app_contact_tile( index,
+                      '${contacts[index].fname} ${contacts[index].lname}',
+                      '${contacts[index].cpse}',
+                      Icons.person);
+                }),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _app_contact_show(){
+    setState(() {
+      _selectedMenuItem = 6;
+    });
+  }
+
+  void _app_contact_spinner_show(String lm){
+    setState(() {
+      load_msg = lm;
+      _selectedMenuItem = 61;
+    });
+  }
+
+  String load_msg='';
+  Widget _app_contact_spinner() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _buildHeader(load_msg),
+        Expanded(
+          child: Container(
+            color: Colors.white,
+            child: Center(
+              child: CircularProgressIndicator(
+                value: controller.value,
+                semanticsLabel: 'Circular progress indicator',
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<modelContact.Contact> _app_contact_filter() {
+    var value = txtSearchController.text;
+
+    List<modelContact.Contact> filteredContacts = [];
+    if (value.toString().trim().length > 0) {
+      contactsCopy.forEach((element) {
+        modelContact.Contact contact = element;
+        if (contact.fname
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(value.toString().trim().toLowerCase()) >=
+                0 ||
+            contact.lname
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(value.toString().trim().toLowerCase()) >=
+                0 ||
+            contact.cpse
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(value.toString().trim().toLowerCase()) >=
+                0) {
+          filteredContacts.add(contact);
+        }
+      });
+        contacts = filteredContacts.toList();
+    } else {
+      contacts = contactsCopy.toList();
+    }
+    return contacts;
+  }
+
+  void _app_contact_filter_show(){
+    contacts = _app_contact_filter();
+    setState(() {
+    });
+  }
+
+  ListTile _app_contact_tile(index, String title, String subtitle, IconData icon) {
+    return ListTile(
+      title: Text(title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 20,
+          )),
+      subtitle: Text(subtitle),
+
+      leading: Icon(
+        icon,
+        color: Colors.blue[500],
+      ),
+      trailing: SizedBox(
+        width: 100,
+        child: Row(
+          children: [
+            //IconButton(onPressed: () {}, icon: const Icon(Icons.favorite)),
+            IconButton(onPressed:  () { _app_contact_one_show(index); }, icon: const Icon(Icons.edit)),
+            IconButton(onPressed: () { _app_contact_delete_contact(index); }, icon: const Icon(Icons.delete)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _app_contact_delete_contact(int index) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete contact'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Want to delete this contact?'),
+                //Text('Would you like to approve of this message?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              //onPressed: () => Navigator.pop(context, 'Cancelx'),
+              onPressed: () { Navigator.pop(context, 'Cancel'); },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              //onPressed: () => Navigator.pop(context, 'OKx'),
+              onPressed: () {
+                Navigator.pop(context, 'OK');
+                String _id = contacts[index].id ?? '';
+                _mongoAtlas_contact_delete(_id);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  modelContact.Contact _app_contact_new_contact(){
+    List<modelContact.Number> numbers = [];
+    modelContact.Contact contact = new modelContact.Contact(numbers: numbers );
+    contact?.active = 'Y';
+    return contact;
+  }
+
+  void _app_contact_one_populate(){
+    txtFnameController.text = selectedContact?.fname ?? '';
+    txtLnameController.text = selectedContact?.lname ?? '';
+    txtLCpseController.text = selectedContact?.cpse ?? '';
+    activeContact = (selectedContact?.active=='Y' ?? true);
+  }
+
+  void _app_contact_one_show(int index){
+    selectedNumber = null; // initialize
+    if(index>=0)
+      //selectedContact = contacts[index];
+
+      // Creating a new Contact object from edit to till save or cancel changes
+      selectedContact = modelContact.Contact.fromJson(contacts[index].getContsctJson(),source: 'local');
+
+    setState(() {
+        _app_contact_one_populate();
+        _selectedMenuItem = 601;
+    });
+  }
+
+  Widget _app_contact_one() {
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _buildHeader('Contacts > Contact'),
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          color: Colors.white,
+          alignment: Alignment.center,
+          child:
+          Column(
+              children: <Widget>[
+                Text(
+                  "Contact detail",
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                TextField(
+                  controller: txtFnameController,
+                  obscureText: false,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'First name',
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                TextField(
+                  controller: txtLnameController,
+                  obscureText: false,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Last name',
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                TextField(
+                  controller: txtLCpseController,
+                  obscureText: false,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Company, Service type, Place, Event or Else',
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+
+              ]
+          ),
+
+        ),
+
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          color: Colors.white,
+          alignment: Alignment.center,
+          child: Row( mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+
+                const SizedBox(
+                  width: 5,
+                ),
+                const Text(
+                  'Active',
+                  style: TextStyle(fontSize: 18),
+                ),
+                // const SizedBox(
+                //   width: 5,
+                // ),
+                Switch(
+                  // This bool value toggles the switch.
+                  value: activeContact
+,
+                  //inactiveThumbColor: Colors.red,
+                  //inactiveTrackColor : Colors.red,
+                  activeColor: Colors.green,
+                  onChanged: (bool value) {
+                    // This is called when the user toggles the switch.
+                    setState(() {
+                      activeContact
+ = value;
+                    });
+                  },
+                ),
+                const SizedBox(
+                  width: 30,
+                ),
+
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green,
+                    onPrimary: Colors.white,
+                    minimumSize: const Size(100, 40),
+                  ),
+                  onPressed: () {
+                    _app_contact_one_save();
+                    //_app_contact_saveContact();
+                  },
+                  child: const Text(
+                    'Save',
+                    //style: TextStyle(fontSize: 24),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.white54,
+                    onPrimary: Colors.black38,
+                    minimumSize: const Size(100, 40),
+                  ),
+                  onPressed: () {
+                    _app_contact_show();
+                  },
+                  child: const Text(
+                    'Cancel',
+                    //style: TextStyle(fontSize: 24),
+                  ),
+                ),
+                const SizedBox(width: 10),
+              ]),
+        ),
+
+        DefaultTextStyle(
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            color: Colors.white,
+            alignment: Alignment.centerLeft,
+            child: Text("  Contact numbers"),
+          ),
+          style: TextStyle(color: Colors.indigo, fontSize: 18, fontStyle: FontStyle.italic ),
+        ),
+
+        Expanded(
+          child: Container(
+            color: Colors.white,
+            // child: Text('Bottom', textAlign: TextAlign.center),
+
+            child: ListView.builder(
+                itemCount: selectedContact?.numbers.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _app_contact_one_tile_numbers(index, '${selectedContact?.numbers[index].number}' , Icons.phone );
+                }
+            ),
+          ),
+
+          // child: Container(
+          //   color: Colors.white,
+          // ),
+        ),
+      ],
+    );
+  }
+
+  ListTile _app_contact_one_tile_numbers(int index, String number, IconData icon) {
+    return ListTile(
+      title: Text(number,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 20,
+          )),
+      //subtitle: Text(subtitle),
+
+      leading: Icon(
+        icon,
+        color: Colors.blue[500],
+      ),
+      trailing: SizedBox(
+        width: 100,
+        child: Row(
+          children: [
+            //IconButton(onPressed: () {}, icon: const Icon(Icons.favorite)),
+            IconButton(onPressed:  () {_app_contact_number_show(index);}, icon: const Icon(Icons.edit)),
+            IconButton(onPressed: () {_app_contact_one_delete_number(index);}, icon: const Icon(Icons.delete)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _app_contact_one_delete_number(int index) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete number'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Want to delete this number ?'),
+                //Text('Would you like to approve of this message?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              //onPressed: () => Navigator.pop(context, 'Cancelx'),
+              onPressed: () { Navigator.pop(context, 'Cancel'); },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              //onPressed: () => Navigator.pop(context, 'OKx'),
+              onPressed: () {
+                Navigator.pop(context, 'OK');
+                String? name = selectedContact?.numbers[index].number;
+                setState(() {
+                  selectedContact?.numbers.removeAt(index);
+                });
+                util.showSuccessSnackBar(context, 'Number $name removed. ');
+                _app_contact_one_show(-1);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _app_contact_one_save(){
+    _app_contact_one_set();
+     modelContact.Contact contact = selectedContact ?? _app_contact_new_contact();
+     print('OK');
+     _mongoAtlas_contact_save(contact);
+  }
+
+  void _app_contact_one_set(){
+    // save controller values to models
+    // before move to different screen
+    selectedContact?.fname = txtFnameController.text;
+    selectedContact?.lname = txtLnameController.text;
+    selectedContact?.cpse = txtLCpseController.text;
+    selectedContact?.active = (activeContact)?'Y':'N';
+  }
+
+  void _app_contact_number_populate(){
+    _app_contact_one_set();
+    txtNumberController.text = selectedNumber?.number ?? '';
+
+    //1omx 1/0 : default/no, o/w : own/work, m/l mob/land, f/x : fax/no
+    String type = selectedNumber?.type ?? '0omx';
+    type = (type.length==4)? type : '0omx';
+    isPersonal = !(type.substring(1,2)=='o' ?? false);
+    isMobile = !(type.substring(2,3)=='m' ?? false);
+  }
+
+  void _app_contact_number_show(int index){
+    if (index>=0) {
+      // Edit number
+      selectedNumber = selectedContact?.numbers[index];
+      _app_contact_number_populate();
+    }else{
+      // Add number
+      isPersonal = false;
+      isMobile = false;
+      txtNumberController.text = '';
+      _app_contact_one_set();
+    }
+    setState(() {
+      _selectedMenuItem = 602;
+    });
+  }
+
+  Widget _app_contact_number() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _buildHeader('Contacts > Contact > Number'),
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          color: Colors.white,
+          alignment: Alignment.center,
+          child:
+          Column(
+              children: <Widget>[
+                // Text(
+                //   "Number detail",
+                // ),
+                const SizedBox(
+                  height: 5,
+                ),
+                TextField(
+                  controller: txtNumberController,
+                  obscureText: false,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Number',
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+              ]
+          ),
+        ),
+
+        Expanded(
+          child: Container(
+            color: Colors.white,
+            // child: Text('Bottom', textAlign: TextAlign.center),
+
+            child: Column(children: <Widget>[
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    const Text(
+                      'Personal',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Switch(
+                      // This bool value toggles the switch.
+                      value: isPersonal,
+                      //inactiveThumbColor: Colors.red,
+                      //inactiveTrackColor : Colors.red,
+                      activeColor: Colors.red,
+                      onChanged: (bool value) {
+                        // This is called when the user toggles the switch.
+                        setState(() {
+                          isPersonal = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    const Text(
+                      'Official',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                  ]),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    const Text(
+                      '     Mob',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Switch(
+                      // This bool value toggles the switch.
+                      value: isMobile,
+                      //inactiveThumbColor: Colors.red,
+                      //inactiveTrackColor : Colors.red,
+                      activeColor: Colors.red,
+                      onChanged: (bool value) {
+                        // This is called when the user toggles the switch.
+                        setState(() {
+                          isMobile = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    const Text(
+                      'Fixed',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                  ]),
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                color: Colors.white,
+                alignment: Alignment.center,
+                child: Row( mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.green,
+                          onPrimary: Colors.white,
+                          minimumSize: const Size(100, 40),
+                        ),
+                        onPressed: () {
+                          //_app_contact_saveContact();
+                          __app_contact_number_set();
+                        },
+                        child: const Text(
+                          'OK',
+                          //style: TextStyle(fontSize: 24),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white54,
+                          onPrimary: Colors.black38,
+                          minimumSize: const Size(100, 40),
+                        ),
+                        onPressed: () {
+                          _app_contact_one_show(-1);
+                        },
+                        child: const Text(
+                          'Cancel',
+                          //style: TextStyle(fontSize: 24),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      //const SizedBox(width: 10),
+                      //const SizedBox(width: 10),
+                    ]),
+              ),
+            ]),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void __app_contact_number_set(){
+    if(txtNumberController.text.trim().length==0){
+      return;
+    }
+
+    String type = __app_contact_number_type();
+
+    if (selectedNumber!=null){
+      selectedNumber?.number = txtNumberController.text;
+      selectedNumber?.type = type;
+    }else{
+      selectedContact?.addNumber(
+        modelContact.Number(
+            number: txtNumberController.text,
+            type: type,
+        )
+      );
+    }
+    _app_contact_one_show(-1);
+  }
+
+  String __app_contact_number_type(){
+    //1omx 1/0 : default/no, o/w : own/work, m/l mob/land, f/x : fax/no
+    String o = !isPersonal?'o':'w';
+    String m = !isMobile ?'m':'p';
+    String type ='0 $o $m x'.replaceAll(' ', '');
+    return type;
+  }
+
 }
 
 // 2. Page Header

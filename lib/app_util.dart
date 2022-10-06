@@ -25,6 +25,19 @@ void showSuccessSnackBar(BuildContext context, String msg) => ScaffoldMessenger
 //..showSnackBar(SnackBar(content: Text(' Person $name successfully saved. ')));
   ..showSnackBar(SnackBar(backgroundColor: Colors.green, content: Text(msg)));
 
+void showFailureSnackBar(BuildContext context, String msg) => ScaffoldMessenger
+    .of(context)
+  ..removeCurrentSnackBar()
+//..showSnackBar(SnackBar(content: Text(' Person $name successfully saved. ')));
+  ..showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text(msg)));
+
+void showPrimarySnackBar(BuildContext context, String msg) => ScaffoldMessenger
+    .of(context)
+  ..removeCurrentSnackBar()
+//..showSnackBar(SnackBar(content: Text(' Person $name successfully saved. ')));
+  ..showSnackBar(SnackBar(backgroundColor: Colors.blue, content: Text(msg)));
+
+
 final ButtonStyle flatButtonStyle = TextButton.styleFrom(
   primary: Colors.black87,
   //minimumSize: Size(88, 36),
