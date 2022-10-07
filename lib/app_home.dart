@@ -1352,9 +1352,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           )),
       //subtitle: Text(subtitle),
 
-      leading: Icon(
-        icon,
+      // leading: Icon(
+      //   icon,
+      //   color: Colors.blue[500],
+      //
+      // ),
+      leading: IconButton(
+        icon: const Icon(Icons.phone),
+        tooltip: 'Tap to dial',
         color: Colors.blue[500],
+        onPressed: () {_app_contact_one_dialCall(number);},
       ),
       trailing: SizedBox(
         width: 100,
@@ -1367,6 +1374,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
         ),
       ),
     );
+  }
+
+  Future<void> _app_contact_one_dialCall(String phoneNumber) async {
+    util.dialCall(phoneNumber);
   }
 
   Future<void> _app_contact_one_delete_number(int index) async {
@@ -1479,6 +1490,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                     border: OutlineInputBorder(),
                     labelText: 'Number',
                   ),
+                  keyboardType: TextInputType.number,
                 ),
                 const SizedBox(
                   height: 5,
@@ -1810,11 +1822,3 @@ Widget _buildCard() {
     ),
   );
 }
-
-
-
-
-
-/*
-
-* */

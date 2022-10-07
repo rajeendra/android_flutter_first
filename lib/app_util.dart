@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:android_flutter_first/app_model.dart' as model;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppUtil{
   static saveAppConfig(model.AppConfiguration config) async {
@@ -47,3 +49,39 @@ final ButtonStyle flatButtonStyle = TextButton.styleFrom(
     borderRadius: BorderRadius.all(Radius.circular(2.0)),
   ),
 );
+
+Future<void> dialCall(String phoneNumber) async {
+  final Uri launchUri = Uri(
+    scheme: 'tel',
+    path: phoneNumber,
+  );
+  await launch(launchUri.toString());
+}
+
+Future<void> sendEmail({
+    required String toMail,
+    required String subject,
+    required String body,
+  }) async {
+
+  final Uri params = Uri(scheme: 'mailto', path: toMail, queryParameters: {
+    'subject': subject,
+    'body': body,
+  });
+
+  await launch(params.toString());
+}
+
+Future<void> sendSMS({
+    required String phoneNumber,
+    required String body
+  }) async {
+
+  final Uri params = Uri(
+      scheme: 'sms', path:
+      phoneNumber,
+      queryParameters: {'body': body}
+  );
+
+  await launch(params.toString());
+}
