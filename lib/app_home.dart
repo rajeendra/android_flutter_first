@@ -44,6 +44,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   // final addressTxtController = TextEditingController();
 
   late AnimationController controller;
+  late ScrollController _scrollController;
+  double _offset = 0.0;
 
   @override
   void initState() {
@@ -54,6 +56,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       setState(() {});
     });
     controller.repeat(reverse: false);
+
+    _scrollController = ScrollController()
+    ..addListener(() {
+      // when ListView gets scroll _offset will update
+      _offset = _scrollController.offset;
+      //print("offset = ${_scrollController.offset}");
+    });
+
     super.initState();
   }
 
@@ -61,8 +71,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   void dispose() {
     // Clean up the controller when the widget is disposed.
     controller.dispose();
-    // nameTxtController.dispose();
-    // addressTxtController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -106,7 +115,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       // At _app_contact_one
       _app_contact_number_show(-1);
     }
-
   }
 
   @override
@@ -1007,6 +1015,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
             // child: Text('Bottom', textAlign: TextAlign.center),
 
             child: ListView.builder(
+                controller: _scrollController,
                 itemCount: contacts.length,
                 itemBuilder: (BuildContext context, int index) {
                   return _app_contact_tile( index,
@@ -1023,7 +1032,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   void _app_contact_show(){
     setState(() {
       _selectedMenuItem = 6;
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        // After build() method this code inside will triggers
+        _scrollDown();
+      });
+
     });
+  }
+
+  // scrolling down with an animated effect
+  // void _scrollDown() {
+  //   _scrollController.animateTo(
+  //     _scrollController.position.maxScrollExtent,
+  //     duration: Duration(seconds: 2),
+  //     curve: Curves.fastOutSlowIn,
+  //   );
+  // }
+  void _scrollDown() {
+    //_scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    _scrollController.jumpTo(_offset);
   }
 
   void _app_contact_spinner_show(String lm){
@@ -1171,6 +1198,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
   void _app_contact_one_show(int index){
     selectedNumber = null; // initialize
+    try {
+      _offset = _scrollController?.offset ?? _offset;
+    } catch (e) {
+      print(e);
+    }
     if(index>=0)
       //selectedContact = contacts[index];
 
