@@ -126,16 +126,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
       body: _buildSelectedBody()
       ,
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
+      drawer: _drawer(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _onPressedFloatingActionButton,
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+  Drawer _drawer(){
+    return Drawer(
+      // Add a ListView to the drawer. This ensures the user can scroll
+      // through the options in the drawer if there isn't enough vertical
+      // space to fit everything.
+      child: ListView(
+        // Important: Remove any padding from the ListView.
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(
                 color: Colors.green,
                 shape: BoxShape.rectangle,
                 gradient: LinearGradient(
@@ -155,86 +164,89 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                   ],
                 )
 
-              ),
-              child: Text('Flatter layout selector'),
             ),
-            ListTile(
-              title: const Text('Layout | Grid'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                // Then close the drawer
-                setState(() {
-                  _selectedMenuItem = 1;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Person | List view, Dynamically grow'),
-              onTap: () {
-                setState(() {
-                  _selectedMenuItem = 2;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Layout | Widgets fully stretched'),
-              onTap: () {
-                setState(() {
-                  _selectedMenuItem = 3;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Album | Async http call'),
-              onTap: () {
-                setState(() {
-                  _selectedMenuItem = 4;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Contact | configuration'),
-              onTap: () {
-                setState(() {
-                  _selectedMenuItem = 5;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Contact'),
-              onTap: () {
-                //setState(() {
-                  // setState() trigger after fetch the contacts
-                  _selectedMenuItem = 6;
-                //});
-                _mongoAtlas_contacts();
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Number incrementer | ..'),
-              onTap: () {
-                setState(() {
-                  _selectedMenuItem = 0;
-                });
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
+            child: Text('Flatter layout selector'),
+          ),
+          ListTile(
+            title: const Text('Layout | Grid'),
+            onTap: () {
+              // Update the state of the app
+              // ...
+              // Then close the drawer
+              // Then close the drawer
+              setState(() {
+                _selectedMenuItem = 1;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Person | List view, Dynamically grow'),
+            onTap: () {
+              setState(() {
+                _selectedMenuItem = 2;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Layout | Widgets fully stretched'),
+            onTap: () {
+              setState(() {
+                _selectedMenuItem = 3;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Album | Async http call'),
+            onTap: () {
+              setState(() {
+                _selectedMenuItem = 4;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Contact | configuration'),
+            onTap: () {
+              setState(() {
+                _selectedMenuItem = 5;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Contact'),
+            onTap: () {
+              //setState(() {
+              // setState() trigger after fetch the contacts
+              _selectedMenuItem = 6;
+              //});
+              _mongoAtlas_contacts();
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Share resources'),
+            onTap: () {
+              setState(() {
+              _selectedMenuItem = 7;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Number incrementer | ..'),
+            onTap: () {
+              setState(() {
+                _selectedMenuItem = 0;
+              });
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onPressedFloatingActionButton,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -265,6 +277,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     }
     else if (_selectedMenuItem == 61) {
       return _app_contact_spinner();
+    }
+    else if (_selectedMenuItem == 7) {
+      return _buildShareResources();
     }
     else if (_selectedMenuItem == 999) {
       return _app_Oops();
@@ -587,6 +602,102 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           ],
         );
       },
+    );
+  }
+
+  ///////////////////////////////////////////////////
+  //  Share resources
+  ///////////////////////////////////////////////////
+
+  Widget _buildShareResources() => Scaffold(
+    backgroundColor: Color(0xFF222222),
+    body: Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _buildHeader('Share resources'),
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          color: Colors.white,
+          alignment: Alignment.center,
+          child: Row( mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green,
+                    onPrimary: Colors.white,
+                    minimumSize: const Size(100, 40),
+                  ),
+                  onPressed: () {  },
+                  child: const Text(
+                    'Take Photo',
+                    //style: TextStyle(fontSize: 24),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green,
+                    onPrimary: Colors.white,
+                    minimumSize: const Size(100, 40),
+                  ),
+                  onPressed: () { _email(); },
+                  child: const Text(
+                    'eMail',
+                    //style: TextStyle(fontSize: 24),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green,
+                    onPrimary: Colors.white,
+                    minimumSize: const Size(100, 40),
+                  ),
+                  onPressed: () { _sms(); },
+                  child: const Text(
+                    'sms',
+                    //style: TextStyle(fontSize: 24),
+                  ),
+                ),
+                const SizedBox(width: 10),
+              ]),
+        ),
+        //Image.file(),
+        DefaultTextStyle(
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: Text('Press buttons to share information'),
+          ),
+          style: TextStyle(color: Colors.blue),
+        ),
+
+        Expanded(
+          child: Container(
+            color: Colors.white,
+            // child: Text('Bottom', textAlign: TextAlign.center),
+
+            //child: ,
+          ),
+        ),
+      ],
+    ),
+  );
+
+  void _email(){
+    util.sendEmail(
+        toMail: 'some.email@gmail.com',
+        subject: 'This is the subject',
+        body: 'This is the content of the email \n\n //Sender '
+    );
+  }
+
+  void _sms(){
+    util.sendSMS(
+        phoneNumber: '0778987765',
+        body: 'This is the text message'
     );
   }
 
