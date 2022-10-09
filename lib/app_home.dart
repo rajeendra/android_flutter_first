@@ -15,6 +15,7 @@ import 'package:android_flutter_first/app_contact_model.dart' as modelContact;
 // App album
 import 'package:android_flutter_first/app_album.dart' as album;
 import 'package:android_flutter_first/app_album_model.dart' as modelAlbum;
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title}) : super(key: key);
@@ -237,6 +238,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
             },
           ),
           ListTile(
+            title: const Text('Scrollable data entry screen'),
+            onTap: () {
+              setState(() {
+                _selectedMenuItem = 8;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
             title: const Text('Number incrementer | ..'),
             onTap: () {
               setState(() {
@@ -251,6 +261,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   }
 
   Widget? _buildSelectedBody() {
+
+    if (_selectedMenuItem == 601) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    }else {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    }
     if (_selectedMenuItem == 1) {
       return _buildGridUI();
     }
@@ -280,6 +304,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     }
     else if (_selectedMenuItem == 7) {
       return _buildShareResources();
+    }
+    else if (_selectedMenuItem == 8) {
+      _assemble_scroll_view();
+      return _build_scroll_view();
     }
     else if (_selectedMenuItem == 999) {
       return _app_Oops();
@@ -351,6 +379,147 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           ],
         ),
       );
+
+  // 8. Scrollable data entry screen
+  final ScrollController _firstController = ScrollController();
+
+  Widget _build_scroll_view() =>
+      LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return Row(
+              children: <Widget>[
+                // SizedBox(
+                //     width: constraints.maxWidth / 2,
+                //     // When using the PrimaryScrollController and a Scrollbar
+                //     // together, only one ScrollPosition can be attached to the
+                //     // PrimaryScrollController at a time. Providing a
+                //     // unique scroll controller to this scroll view prevents it
+                //     // from attaching to the PrimaryScrollController.
+                //     child: Scrollbar(
+                //       //thumbVisibility: true,
+                //       controller: _firstController,
+                //       child: ListView.builder(
+                //           controller: _firstController,
+                //           itemCount: 100,
+                //           itemBuilder: (BuildContext context, int index) {
+                //             return Padding(
+                //               padding: const EdgeInsets.all(8.0),
+                //               child: Text('Scrollable 1 : Index $index'),
+                //             );
+                //           }),
+                //     )),
+                SizedBox(
+                    //width: constraints.maxWidth / 2,
+                    width: constraints.maxWidth,
+                    // This vertical scroll view has primary set to true, so it is
+                    // using the PrimaryScrollController. On mobile platforms, the
+                    // PrimaryScrollController automatically attaches to vertical
+                    // ScrollViews, unlike on Desktop platforms, where the primary
+                    // parameter is required.
+                    child: Scrollbar(
+                      //thumbVisibility: true,
+                      child: ListView.builder(
+                          primary: true,
+                          itemCount: cns.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            //return _container(index);
+                            return cns[index];
+                            // return Container(
+                            //     height: 50,
+                            //     color: index.isEven
+                            //         ? Colors.white
+                            //         : Colors.lightBlue,
+                            //     child: Padding(
+                            //       padding: const EdgeInsets.all(8.0),
+                            //       //child: Text('Scrollable 2 : Index $index'),
+                            //       child: TextField(
+                            //         controller: txtFnameController,
+                            //         obscureText: false,
+                            //         decoration: InputDecoration(
+                            //           border: OutlineInputBorder(),
+                            //           labelText: 'First name',
+                            //         ),
+                            //       ),
+                            //     ));
+                          }),
+                    )),
+              ],
+            );
+          });
+
+  List<Widget> cns = [];
+  void _assemble_scroll_view(){
+    cns = [];
+    cns.add(_container(1));
+    cns.add(_container(2));
+    cns.add(_buttonr());
+
+    cns.add(_container(2));
+    cns.add(_container(1));
+    cns.add(_buttonr());
+
+    cns.add(_container(2));
+    cns.add(_container(1));
+    cns.add(_buttonr());
+
+    cns.add(_container(2));
+    cns.add(_container(1));
+    cns.add(_buttonr());
+
+    cns.add(_container(2));
+    cns.add(_container(1));
+    cns.add(_buttonr());
+
+    cns.add(_container(2));
+    cns.add(_container(1));
+    cns.add(_buttonr());
+
+    cns.add(_container(2));
+    cns.add(_container(1));
+    cns.add(_buttonr());
+  }
+
+  Widget _container(int index) {
+    return Container(
+        height: 50,
+        color: index.isEven ?
+        Colors.white
+            : Colors.lightBlue,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          //child: Text('Scrollable 2 : Index $index'),
+          child: TextField(
+            controller: txtFnameController,
+            obscureText: false,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'First name',
+            ),
+          ),
+        ));
+  }
+
+  Widget _buttonr() {
+    return Container(
+        height: 75,
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          //child: Text('Scrollable 2 : Index $index'),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.green,
+              onPrimary: Colors.white,
+              minimumSize: const Size(100, 40),
+            ),
+            onPressed: () {  },
+            child: const Text(
+              'Take Photo',
+              //style: TextStyle(fontSize: 24),
+            ),
+          ),
+        ));
+  }
 
   // 1. Number Incrementer
   Widget _buildNumberIncrementer() =>
@@ -1327,144 +1496,110 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   }
 
   Widget _app_contact_one() {
-
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         _buildHeader('Contacts > Contact'),
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          color: Colors.white,
-          alignment: Alignment.center,
-          child:
-          Column(
-              children: <Widget>[
-                Text(
-                  "Contact detail",
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                TextField(
-                  controller: txtFnameController,
-                  obscureText: false,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'First name',
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                TextField(
-                  controller: txtLnameController,
-                  obscureText: false,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Last name',
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                TextField(
-                  controller: txtLCpseController,
-                  obscureText: false,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Company, Service type, Place, Event or Else',
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-
-              ]
+        const SizedBox(
+          height: 5,
+        ),
+        TextField(
+          controller: txtFnameController,
+          obscureText: false,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'First name',
           ),
-
         ),
-
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          color: Colors.white,
-          alignment: Alignment.center,
-          child: Row( mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-
-                const SizedBox(
-                  width: 5,
-                ),
-                const Text(
-                  'Active',
-                  style: TextStyle(fontSize: 18),
-                ),
-                // const SizedBox(
-                //   width: 5,
-                // ),
-                Switch(
-                  // This bool value toggles the switch.
-                  value: activeContact
-,
-                  //inactiveThumbColor: Colors.red,
-                  //inactiveTrackColor : Colors.red,
-                  activeColor: Colors.green,
-                  onChanged: (bool value) {
-                    // This is called when the user toggles the switch.
-                    setState(() {
-                      activeContact
- = value;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.green,
-                    onPrimary: Colors.white,
-                    minimumSize: const Size(100, 40),
-                  ),
-                  onPressed: () {
-                    _app_contact_one_save();
-                    //_app_contact_saveContact();
-                  },
-                  child: const Text(
-                    'Save',
-                    //style: TextStyle(fontSize: 24),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.white54,
-                    onPrimary: Colors.black38,
-                    minimumSize: const Size(100, 40),
-                  ),
-                  onPressed: () {
-                    _app_contact_show();
-                  },
-                  child: const Text(
-                    'Cancel',
-                    //style: TextStyle(fontSize: 24),
-                  ),
-                ),
-                const SizedBox(width: 10),
-              ]),
+        const SizedBox(
+          height: 5,
         ),
-
-        DefaultTextStyle(
-          child: Container(
-            padding: const EdgeInsets.all(8.0),
-            color: Colors.white,
-            alignment: Alignment.centerLeft,
-            child: Text("  Contact numbers"),
+        TextField(
+          controller: txtLnameController,
+          obscureText: false,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Last name',
           ),
-          style: TextStyle(color: Colors.indigo, fontSize: 18, fontStyle: FontStyle.italic ),
         ),
+        const SizedBox(
+          height: 5,
+        ),
+        TextField(
+          controller: txtLCpseController,
+          obscureText: false,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Company, Service type, Place, Event or Else',
+          ),
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+        Row( mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
 
+              const SizedBox(
+                width: 5,
+              ),
+              const Text(
+                'Active',
+                style: TextStyle(fontSize: 18),
+              ),
+              // const SizedBox(
+              //   width: 5,
+              // ),
+              Switch(
+                // This bool value toggles the switch.
+                value: activeContact,
+                //inactiveThumbColor: Colors.red,
+                //inactiveTrackColor : Colors.red,
+                activeColor: Colors.green,
+                onChanged: (bool value) {
+                  // This is called when the user toggles the switch.
+                  setState(() {
+                    activeContact = value;
+                  });
+                },
+              ),
+              const SizedBox(
+                width: 30,
+              ),
+
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green,
+                  onPrimary: Colors.white,
+                  minimumSize: const Size(100, 40),
+                ),
+                onPressed: () {
+                  _app_contact_one_save();
+                  //_app_contact_saveContact();
+                },
+                child: const Text(
+                  'Save',
+                  //style: TextStyle(fontSize: 24),
+                ),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.white54,
+                  onPrimary: Colors.black38,
+                  minimumSize: const Size(100, 40),
+                ),
+                onPressed: () {
+                  _app_contact_show();
+                },
+                child: const Text(
+                  'Cancel',
+                  //style: TextStyle(fontSize: 24),
+                ),
+              ),
+              const SizedBox(width: 10),
+            ]),
+        const SizedBox(
+          height: 10,
+        ),
         Expanded(
           child: Container(
             color: Colors.white,
@@ -1609,166 +1744,143 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
   Widget _app_contact_number() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        _buildHeader('Contacts > Contact > Number'),
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          color: Colors.white,
-          alignment: Alignment.center,
-          child:
-          Column(
-              children: <Widget>[
-                // Text(
-                //   "Number detail",
-                // ),
-                const SizedBox(
-                  height: 5,
-                ),
-                TextField(
-                  controller: txtNumberController,
-                  obscureText: false,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Number',
+        children: <Widget>[
+          _buildHeader('Contacts > Contact > Number'),
+          Padding(
+            padding: EdgeInsets.all(5.0),
+            child: Column(
+                children: <Widget>[
+                  const SizedBox(
+                    height: 5,
                   ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-              ]
+                  TextField(
+                    controller: txtNumberController,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Number',
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Row( mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.green,
+                            onPrimary: Colors.white,
+                            minimumSize: const Size(100, 40),
+                          ),
+                          onPressed: () {
+                            //_app_contact_saveContact();
+                            __app_contact_number_set();
+                          },
+                          child: const Text(
+                            'OK',
+                            //style: TextStyle(fontSize: 24),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.white54,
+                            onPrimary: Colors.black38,
+                            minimumSize: const Size(100, 40),
+                          ),
+                          onPressed: () {
+                            _app_contact_one_show(-1);
+                          },
+                          child: const Text(
+                            'Cancel',
+                            //style: TextStyle(fontSize: 24),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        //const SizedBox(width: 10),
+                        //const SizedBox(width: 10),
+                      ]),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Text(
+                          'Personal',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Switch(
+                          // This bool value toggles the switch.
+                          value: isPersonal,
+                          //inactiveThumbColor: Colors.red,
+                          //inactiveTrackColor : Colors.red,
+                          activeColor: Colors.red,
+                          onChanged: (bool value) {
+                            // This is called when the user toggles the switch.
+                            setState(() {
+                              isPersonal = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Text(
+                          'Official',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                      ]),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Text(
+                          '     Mob',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Switch(
+                          // This bool value toggles the switch.
+                          value: isMobile,
+                          //inactiveThumbColor: Colors.red,
+                          //inactiveTrackColor : Colors.red,
+                          activeColor: Colors.red,
+                          onChanged: (bool value) {
+                            // This is called when the user toggles the switch.
+                            setState(() {
+                              isMobile = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Text(
+                          'Fixed',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                      ]),
+                ]
+            ),
           ),
-        ),
-
-        Expanded(
-          child: Container(
-            color: Colors.white,
-            // child: Text('Bottom', textAlign: TextAlign.center),
-
-            child: Column(children: <Widget>[
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    const Text(
-                      'Personal',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Switch(
-                      // This bool value toggles the switch.
-                      value: isPersonal,
-                      //inactiveThumbColor: Colors.red,
-                      //inactiveTrackColor : Colors.red,
-                      activeColor: Colors.red,
-                      onChanged: (bool value) {
-                        // This is called when the user toggles the switch.
-                        setState(() {
-                          isPersonal = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    const Text(
-                      'Official',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                  ]),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    const Text(
-                      '     Mob',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Switch(
-                      // This bool value toggles the switch.
-                      value: isMobile,
-                      //inactiveThumbColor: Colors.red,
-                      //inactiveTrackColor : Colors.red,
-                      activeColor: Colors.red,
-                      onChanged: (bool value) {
-                        // This is called when the user toggles the switch.
-                        setState(() {
-                          isMobile = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    const Text(
-                      'Fixed',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                  ]),
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                color: Colors.white,
-                alignment: Alignment.center,
-                child: Row( mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.green,
-                          onPrimary: Colors.white,
-                          minimumSize: const Size(100, 40),
-                        ),
-                        onPressed: () {
-                          //_app_contact_saveContact();
-                          __app_contact_number_set();
-                        },
-                        child: const Text(
-                          'OK',
-                          //style: TextStyle(fontSize: 24),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white54,
-                          onPrimary: Colors.black38,
-                          minimumSize: const Size(100, 40),
-                        ),
-                        onPressed: () {
-                          _app_contact_one_show(-1);
-                        },
-                        child: const Text(
-                          'Cancel',
-                          //style: TextStyle(fontSize: 24),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      //const SizedBox(width: 10),
-                      //const SizedBox(width: 10),
-                    ]),
-              ),
-            ]),
-          ),
-        ),
-      ],
-    );
+        ],
+      );
   }
 
   void __app_contact_number_set(){
