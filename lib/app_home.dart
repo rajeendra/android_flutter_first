@@ -320,7 +320,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       return _app_contact_one();
     }
     else if (_selectedMenuItem == 602) {
-      return _app_contact_number();
+      return _app_contact_number_silver();
     }
     else if (_selectedMenuItem == 61) {
       return _app_contact_spinner();
@@ -1940,6 +1940,27 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     setState(() {
       _selectedMenuItem = 602;
     });
+  }
+
+  // This is how a usual widget surrounded by a scrollable silver
+  // Ex: conversion of the widget _app_contact_number() to scrollable silver _app_contact_number_silver(){
+  Widget _app_contact_number_silver(){
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+              return Container(
+                color:  Colors.white,
+                height: 700,
+                child: _app_contact_number(),
+              );
+            },
+            childCount: 1,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _app_contact_number() {
