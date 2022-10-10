@@ -261,6 +261,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
             },
           ),
           ListTile(
+            title: const Text('Silvers - Multiple pages'),
+            onTap: () {
+              setState(() {
+                _selectedMenuItem = 91;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
             title: const Text('Number incrementer | ..'),
             onTap: () {
               setState(() {
@@ -325,6 +334,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     }
     else if (_selectedMenuItem == 9) {
       return _build_silvers();
+    }
+    else if (_selectedMenuItem == 91) {
+      return _build_silvers_multiple_pages();
     }
     else if (_selectedMenuItem == 999) {
       return _app_Oops();
@@ -538,6 +550,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
         ));
   }
 
+  // 9. Silvers - custom scroll view - Adding silvers from top and bottom
   List<int> topIntSilvers = <int>[];
   List<int> bottomIntSilvers = <int>[0];
   Widget _build_silvers(){
@@ -586,6 +599,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
               );
             },
             childCount: bottomIntSilvers.length,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // 91. Silvers - custom scroll view - Multiple scrollable pages
+  List<Widget> silverPages = <Widget>[];
+  Widget _build_silvers_multiple_pages(){
+    silverPages = [];
+    silverPages.add(_buildAsyncFutureHttp());
+    silverPages.add(_app_Oops());
+    silverPages.add(_buildAsyncFutureHttp());
+    silverPages.add(_app_Oops());
+
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+              return Container(
+                // alignment: Alignment.center,
+                // color: Colors.blue[200 + bottomIntSilvers[index] % 4 * 100],
+                // height: 100 + bottomIntSilvers[index] % 4 * 20.0,
+                // child: Text('Item: ${bottomIntSilvers[index]}'),
+
+                color:  Colors.white,
+                height: 500,
+                child: silverPages[index],
+
+              );
+            },
+            childCount: silverPages.length,
           ),
         ),
       ],
@@ -945,77 +991,160 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   //  Album app | Async http service call
   ///////////////////////////////////////////////////
   List<modelAlbum.Album> albums=[];
-
-  Widget _buildAsyncFutureHttp() => Scaffold(
-    backgroundColor: Color(0xFF222222),
-    body: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        _buildHeader('Async with Future<T> and HTTP'),
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          color: Colors.white,
-          alignment: Alignment.center,
-          child: Row( mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.green,
-                    onPrimary: Colors.white,
-                    minimumSize: const Size(100, 40),
-                  ),
-                  onPressed: () {
-                    _httpGetAlbums();
-                  },
-                  child: const Text(
-                    'Fetch',
-                    //style: TextStyle(fontSize: 24),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.grey,
-                    onPrimary: Colors.black,
-                    minimumSize: const Size(100, 40),
-                  ),
-                  onPressed: () { _clearAlbums(); },
-                  child: const Text(
-                    'Clear',
-                    //style: TextStyle(fontSize: 24),
-                  ),
-                ),
-                const SizedBox(width: 10),
-              ]),
-        ),
-
-        DefaultTextStyle(
-          child: Container(
+  Widget _buildAsyncFutureHttp() {
+    Widget result;
+    if(albums.length==0){
+      result = Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _buildHeader('Async with Future<T> and HTTP'),
+          Container(
             padding: const EdgeInsets.all(8.0),
             color: Colors.white,
             alignment: Alignment.center,
-            child: Text('Press buttons to do http and clear'),
+            child: Row(mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green,
+                      onPrimary: Colors.white,
+                      minimumSize: const Size(100, 40),
+                    ),
+                    onPressed: () {
+                      _httpGetAlbums();
+                    },
+                    child: const Text(
+                      'Fetch',
+                      //style: TextStyle(fontSize: 24),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey,
+                      onPrimary: Colors.black,
+                      minimumSize: const Size(100, 40),
+                    ),
+                    onPressed: () {
+                      _clearAlbums();
+                    },
+                    child: const Text(
+                      'Clear',
+                      //style: TextStyle(fontSize: 24),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                ]),
           ),
-          style: TextStyle(color: Colors.blue),
-        ),
 
-        Expanded(
-          child: Container(
-            color: Colors.white,
-            // child: Text('Bottom', textAlign: TextAlign.center),
+          Expanded(
+            child: Container(
+              color: Colors.white,
+              child: Center(
+                  child:
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    //crossAxisAlignment: CrossAxisAlignment.stretch,
 
-            child: ListView.builder(
-                itemCount: albums.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _tileAlum('${albums[index].title }' , '${albums[index].id}', Icons.album_outlined );
-                }
+                    children: <Widget>[
+                      Text('Empty albums',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          //fontStyle: FontStyle.italic,
+                          fontSize: 30.0,
+                        ),
+                      ),
+                      Icon(
+                          Icons.album,
+                          size: 80.0,
+                          color: Colors.blue
+                      ),
+                      Text('Press fetch to get the albums',
+                        style: TextStyle(
+                          //fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ],
+                  )
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      );
+    }else{
+      result = Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _buildHeader('Async with Future<T> and HTTP'),
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: Row( mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green,
+                      onPrimary: Colors.white,
+                      minimumSize: const Size(100, 40),
+                    ),
+                    onPressed: () {
+                      _httpGetAlbums();
+                    },
+                    child: const Text(
+                      'Fetch',
+                      //style: TextStyle(fontSize: 24),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey,
+                      onPrimary: Colors.black,
+                      minimumSize: const Size(100, 40),
+                    ),
+                    onPressed: () { _clearAlbums(); },
+                    child: const Text(
+                      'Clear',
+                      //style: TextStyle(fontSize: 24),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                ]),
+          ),
+
+          DefaultTextStyle(
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              color: Colors.white,
+              alignment: Alignment.center,
+              child: Text('Press buttons to do http and clear'),
+            ),
+            style: TextStyle(color: Colors.blue),
+          ),
+
+          Expanded(
+            child: Container(
+              color: Colors.white,
+              // child: Text('Bottom', textAlign: TextAlign.center),
+
+              child: ListView.builder(
+                  itemCount: albums.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return _tileAlum('${albums[index].title }' , '${albums[index].id}', Icons.album_outlined );
+                  }
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    return result;
+  }
 
   ListTile _tileAlum(String title, String subtitle, IconData icon) {
     return ListTile(
