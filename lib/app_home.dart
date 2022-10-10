@@ -115,6 +115,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     } else if(_selectedMenuItem==601){
       // At _app_contact_one
       _app_contact_number_show(-1);
+    } else if(_selectedMenuItem==9){
+      setState(() {
+        topIntSilvers.add(-topIntSilvers.length - 1);
+        bottomIntSilvers.add(bottomIntSilvers.length);
+      });
     }
   }
 
@@ -247,6 +252,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
             },
           ),
           ListTile(
+            title: const Text('Silvers'),
+            onTap: () {
+              setState(() {
+                _selectedMenuItem = 9;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
             title: const Text('Number incrementer | ..'),
             onTap: () {
               setState(() {
@@ -308,6 +322,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     else if (_selectedMenuItem == 8) {
       _assemble_scroll_view();
       return _build_scroll_view();
+    }
+    else if (_selectedMenuItem == 9) {
+      return _build_silvers();
     }
     else if (_selectedMenuItem == 999) {
       return _app_Oops();
@@ -519,6 +536,60 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
             ),
           ),
         ));
+  }
+
+  List<int> topIntSilvers = <int>[];
+  List<int> bottomIntSilvers = <int>[0];
+  Widget _build_silvers(){
+    //const Key centerKey = ValueKey<String>('bottom-sliver-list');
+    return CustomScrollView(
+      //center: centerKey,
+      slivers: <Widget>[
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+              return Container(
+                // alignment: Alignment.center,
+                // color: Colors.blue[200 + topIntSilvers[index] % 4 * 100],
+                // height: 100 + topIntSilvers[index] % 4 * 20.0,
+                // child: Text('Item: ${topIntSilvers[index]}'),
+
+                alignment: Alignment.center,
+                color: Colors.blue[200 + topIntSilvers[index] % 4 * 100],
+                height: 100.0,
+                child: Text('Item: ${topIntSilvers[index]}'),
+
+              );
+            },
+            childCount: topIntSilvers.length,
+          ),
+        ),
+        SliverList(
+          //key: centerKey,
+          delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+              return Container(
+                // alignment: Alignment.center,
+                // color: Colors.blue[200 + bottomIntSilvers[index] % 4 * 100],
+                // height: 100 + bottomIntSilvers[index] % 4 * 20.0,
+                // child: Text('Item: ${bottomIntSilvers[index]}'),
+
+                alignment: Alignment.center,
+                color:  Colors.blue[200 + bottomIntSilvers[index] % 4 * 100],
+                height: 100,
+                child: Text('Item: ${bottomIntSilvers[index]}'),
+
+                //height: 700,
+                //child: _app_Oops(),
+
+
+              );
+            },
+            childCount: bottomIntSilvers.length,
+          ),
+        ),
+      ],
+    );
   }
 
   // 1. Number Incrementer
