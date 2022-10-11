@@ -4,6 +4,8 @@ import 'package:camera/camera.dart';
 
 import 'package:android_flutter_first/main.dart' as main;
 
+// Custom widgets
+import 'package:android_flutter_first/custom_widget_icon_favorite.dart' as cwIcon;
 // Test
 import 'package:android_flutter_first/test._dart.dart' as test;
 // App
@@ -954,10 +956,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   ///////////////////////////////////////////////////
 
   Widget _buildShareResources() => Scaffold(
-    backgroundColor: Color(0xFF222222),
+    //backgroundColor: Color(0xFF222222),
+    backgroundColor: Colors.white,
     body: Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         _buildHeader('Share resources'),
         Container(
@@ -1021,7 +1024,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           ),
           style: TextStyle(color: Colors.blue),
         ),
-
+        cwIcon.FavoriteWidget(),
         Expanded(
           child: Container(
             color: Colors.white,
