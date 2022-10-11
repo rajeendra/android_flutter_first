@@ -1728,7 +1728,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       //selectedContact = contacts[index];
 
       // Creating a new Contact object from edit to till save or cancel changes
-      selectedContact = modelContact.Contact.fromJson(contacts[index].getContsctJson(),source: 'local');
+      selectedContact = modelContact.Contact.fromJson(contacts[index].toJson(),source: 'local');
 
     setState(() {
         _app_contact_one_populate();

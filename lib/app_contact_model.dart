@@ -60,8 +60,8 @@ class Contact {
     );
   }
 
-  Map<String, dynamic> toJson() => getContsctJson();
-  Map<String, dynamic> getContsctJson(){
+  Map<String, dynamic> toJson() => _getContsctJson();
+  Map<String, dynamic> _getContsctJson(){
 
     List<Map<String, dynamic>> numbersJSON=[];
 
