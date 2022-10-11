@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:android_flutter_first/app_home.dart' as hp;
+import 'package:camera/camera.dart';
 
-void main() {
+late List<CameraDescription> cameras;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
+  //final firstCamera = cameras.first;
+  //print('OK');
+
   runApp(MyApp());
 }
 

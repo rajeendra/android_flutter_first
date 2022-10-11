@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
+
+import 'package:android_flutter_first/main.dart' as main;
 
 // Test
 import 'package:android_flutter_first/test._dart.dart' as test;
@@ -48,6 +51,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   late ScrollController _scrollController;
   double _offset = 0.0;
 
+  late CameraController cameraController;
+
   @override
   void initState() {
     controller = AnimationController(
@@ -65,6 +70,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       //print("offset = ${_scrollController.offset}");
     });
 
+    cameraController = CameraController( main.cameras[0], ResolutionPreset.max);
+    cameraController.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    }).catchError((Object e) {
+      if (e is CameraException) {
+        switch (e.code) {
+          case 'CameraAccessDenied':
+            print('User denied camera access.');
+            break;
+          default:
+            print('Handle other errors.');
+            break;
+        }
+      }
+    });
+
     super.initState();
   }
 
@@ -73,6 +97,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     // Clean up the controller when the widget is disposed.
     controller.dispose();
     _scrollController.dispose();
+    cameraController.dispose();
     super.dispose();
   }
 
@@ -328,6 +353,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     else if (_selectedMenuItem == 7) {
       return _buildShareResources();
     }
+    else if (_selectedMenuItem == 701) {
+      return _build_camera(context);
+    }
     else if (_selectedMenuItem == 8) {
       _assemble_scroll_view();
       return _build_scroll_view();
@@ -344,6 +372,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     else {
       return _buildNumberIncrementer();
     }
+  }
+
+  Widget _build_camera(BuildContext context) {
+    if (!cameraController.value.isInitialized) {
+      return Container();
+    }
+    return MaterialApp(
+      home: CameraPreview(cameraController),
+    );
   }
 
   Widget _buildWidgetsFullyStretched() => Scaffold(
@@ -914,9 +951,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                     onPrimary: Colors.white,
                     minimumSize: const Size(100, 40),
                   ),
-                  onPressed: () {  },
+                  onPressed: () {
+                    setState(() {
+                      _selectedMenuItem = 701;
+                    });
+                  },
                   child: const Text(
-                    'Take Photo',
+                    'Camera',
                     //style: TextStyle(fontSize: 24),
                   ),
                 ),
