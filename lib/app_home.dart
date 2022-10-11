@@ -140,6 +140,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     } else if(_selectedMenuItem==601){
       // At _app_contact_one
       _app_contact_number_show(-1);
+    } else if(_selectedMenuItem==701){
+      _camera_take_picture();
     } else if(_selectedMenuItem==9){
       setState(() {
         topIntSilvers.add(-topIntSilvers.length - 1);
@@ -381,6 +383,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     return MaterialApp(
       home: CameraPreview(cameraController),
     );
+  }
+
+  void _camera_take_picture() async {
+    // Take the Picture in a try / catch block. If anything goes wrong,
+    // catch the error.
+    try {
+      // Ensure that the camera is initialized.
+      //await _initializeControllerFuture;
+
+      // Attempt to take a picture and then get the location
+      // where the image file is saved.
+      final image = await  cameraController.takePicture();
+      util.showSuccessSnackBar(context, 'Picture has been taken');
+    } catch (e) {
+      util.showFailureSnackBar(context, 'Failed to take the picture');
+      // If an error occurs, log the error to the console.
+      print(e);
+    }
+
   }
 
   Widget _buildWidgetsFullyStretched() => Scaffold(
