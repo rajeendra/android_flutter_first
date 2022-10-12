@@ -12,6 +12,7 @@ import 'package:android_flutter_first/test._dart.dart' as test;
 // App
 import 'package:android_flutter_first/app_util.dart' as util;
 import 'package:android_flutter_first/app_model.dart' as model;
+import 'package:android_flutter_first/app_constants.dart' as constants;
 // App person
 import 'package:android_flutter_first/app_person_ui.dart' as personUI;
 import 'package:android_flutter_first/app_person_model.dart' as data;
@@ -45,7 +46,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   //List<service.Album> albums=[];
   List<data.Person> persons=[];
   int _counter = 0;
-  int _selectedMenuItem = 0;
+  int selectedState = constants.STATE_DEFAULT;
 
   // final nameTxtController = TextEditingController();
   // final addressTxtController = TextEditingController();
@@ -130,22 +131,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   }
 
   void _onPressedFloatingActionButton() {
-    if(_selectedMenuItem==0){
+    if(selectedState==constants.STATE_DEFAULT){
       _incrementCounter();
-    } else if(_selectedMenuItem==2){
+    } else if(selectedState==constants.STATE_APP_PERSON){
       _addOrEditPerson(context,data.Person('',''),data.Config(data.Config.METHOD_ADD));
-    } else if(_selectedMenuItem==3){
+    } else if(selectedState==constants.STATE_LAYOUT_FULL_STRETCHED){
       test.mainTest(context);
-    } else if (_selectedMenuItem == 6) {
+    } else if (selectedState == constants.STATE_APP_CONTACT) {
       // At _app_contact
       selectedContact = _app_contact_new_contact();
       _app_contact_one_show(-1);
-    } else if(_selectedMenuItem==601){
+    } else if(selectedState==constants.STATE_APP_CONTACT_ONE){
       // At _app_contact_one
       _app_contact_number_show(-1);
-    } else if(_selectedMenuItem==701){
+    } else if(selectedState==constants.STATE_SHARE_CONTENT_CAMERA){
       _camera_take_picture();
-    } else if(_selectedMenuItem==9){
+    } else if(selectedState==constants.STATE_LAYOUT_SILVERS){
       setState(() {
         topIntSilvers.add(-topIntSilvers.length - 1);
         bottomIntSilvers.add(bottomIntSilvers.length);
@@ -204,6 +205,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
             child: Text('Flatter layout selector'),
           ),
           ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
             title: const Text('Layout | Grid'),
             onTap: () {
               // Update the state of the app
@@ -211,99 +214,119 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
               // Then close the drawer
               // Then close the drawer
               setState(() {
-                _selectedMenuItem = 1;
+                selectedState = constants.STATE_LAYOUT_GRID;
               });
               Navigator.pop(context);
             },
           ),
           ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
             title: const Text('Person | List view, Dynamically grow'),
             onTap: () {
               setState(() {
-                _selectedMenuItem = 2;
+                selectedState = constants.STATE_APP_PERSON;
               });
               Navigator.pop(context);
             },
           ),
           ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
             title: const Text('Layout | Widgets fully stretched'),
             onTap: () {
               setState(() {
-                _selectedMenuItem = 3;
+                selectedState = constants.STATE_LAYOUT_FULL_STRETCHED;
               });
               Navigator.pop(context);
             },
           ),
           ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
             title: const Text('Album | Async http call'),
             onTap: () {
               setState(() {
-                _selectedMenuItem = 4;
+                selectedState = constants.STATE_APP_ALBUM;
               });
               Navigator.pop(context);
             },
           ),
           ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
             title: const Text('Contact | configuration'),
             onTap: () {
               setState(() {
-                _selectedMenuItem = 5;
+                selectedState = constants.STATE_APP_CONTACT_CONFIGURATION;
               });
               Navigator.pop(context);
             },
           ),
           ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
             title: const Text('Contact'),
             onTap: () {
               //setState(() {
               // setState() trigger after fetch the contacts
-              _selectedMenuItem = 6;
+              selectedState = constants.STATE_APP_CONTACT;
               //});
               _mongoAtlas_contacts();
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text('Share resources'),
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
+            title: const Text('Share content'),
             onTap: () {
               setState(() {
-              _selectedMenuItem = 7;
+              selectedState = constants.STATE_SHARE_CONTENT;
               });
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text('Scrollable data entry screen'),
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
+            title: const Text('Layout | Scrollable form'),
             onTap: () {
               setState(() {
-                _selectedMenuItem = 8;
+                selectedState = constants.STATE_LAYOUT_SCROLLABLE_FORM;
               });
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text('Silvers'),
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
+            title: const Text('Layout | Silvers'),
             onTap: () {
               setState(() {
-                _selectedMenuItem = 9;
+                selectedState = constants.STATE_LAYOUT_SILVERS;
               });
               Navigator.pop(context);
             },
           ),
           ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
             title: const Text('Silvers - Multiple pages'),
             onTap: () {
               setState(() {
-                _selectedMenuItem = 91;
+                selectedState = constants.STATE_LAYOUT_SILVERS_PAGES;
               });
               Navigator.pop(context);
             },
           ),
           ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
             title: const Text('Number incrementer | ..'),
             onTap: () {
               setState(() {
-                _selectedMenuItem = 0;
+                selectedState = constants.STATE_DEFAULT;
               });
               Navigator.pop(context);
             },
@@ -315,7 +338,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
   Widget? _buildSelectedBody() {
 
-    if (_selectedMenuItem == 601) {
+    if (selectedState == constants.STATE_APP_CONTACT_NUMBER) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
@@ -328,50 +351,50 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
         DeviceOrientation.landscapeRight,
       ]);
     }
-    if (_selectedMenuItem == 1) {
+    if (selectedState == constants.STATE_LAYOUT_GRID) {
       return _buildGridUI();
     }
-    else if (_selectedMenuItem == 2) {
+    else if (selectedState == constants.STATE_APP_PERSON) {
       return _buildIncrementalList();
     }
-    else if (_selectedMenuItem == 3) {
+    else if (selectedState == constants.STATE_LAYOUT_FULL_STRETCHED) {
       return _buildWidgetsFullyStretched();
     }
-    else if (_selectedMenuItem == 4) {
+    else if (selectedState == constants.STATE_APP_ALBUM) {
       return _buildAsyncFutureHttp();
     }
-    else if (_selectedMenuItem == 5) {
+    else if (selectedState == constants.STATE_APP_CONTACT_CONFIGURATION) {
       return _app_contact_config();
     }
-    else if (_selectedMenuItem == 6) {
+    else if (selectedState == constants.STATE_APP_CONTACT) {
       return _app_contact();
     }
-    else if (_selectedMenuItem == 601) {
+    else if (selectedState == constants.STATE_APP_CONTACT_ONE) {
       return _app_contact_one();
     }
-    else if (_selectedMenuItem == 602) {
+    else if (selectedState == constants.STATE_APP_CONTACT_NUMBER) {
       return _app_contact_number_silver();
     }
-    else if (_selectedMenuItem == 61) {
+    else if (selectedState == constants.STATE_APP_CONTACT_SPINNER) {
       return _app_contact_spinner();
     }
-    else if (_selectedMenuItem == 7) {
+    else if (selectedState == constants.STATE_SHARE_CONTENT) {
       return _buildShareResources();
     }
-    else if (_selectedMenuItem == 701) {
+    else if (selectedState == constants.STATE_SHARE_CONTENT_CAMERA) {
       return _build_camera(context);
     }
-    else if (_selectedMenuItem == 8) {
+    else if (selectedState == constants.STATE_LAYOUT_SCROLLABLE_FORM) {
       _assemble_scroll_view();
       return _build_scroll_view();
     }
-    else if (_selectedMenuItem == 9) {
+    else if (selectedState == constants.STATE_LAYOUT_SILVERS) {
       return _build_silvers();
     }
-    else if (_selectedMenuItem == 91) {
+    else if (selectedState == constants.STATE_LAYOUT_SILVERS_PAGES) {
       return _build_silvers_multiple_pages();
     }
-    else if (_selectedMenuItem == 999) {
+    else if (selectedState == constants.STATE_ERROR_UNEXPECTED) {
       return _app_Oops();
     }
     else {
@@ -978,7 +1001,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                   ),
                   onPressed: () {
                     setState(() {
-                      _selectedMenuItem = 701;
+                      selectedState = constants.STATE_SHARE_CONTENT_CAMERA;
                     });
                   },
                   child: const Text(
@@ -1452,7 +1475,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       contactsCopy = contacts.toList();
       _app_contact_filter();
       setState(() {
-        _selectedMenuItem = 6;
+        selectedState = constants.STATE_APP_CONTACT;
       });
       String count = contacts.length.toString();
       util.showSuccessSnackBar(context, 'Success, $count contacts fetched');
@@ -1460,7 +1483,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     } catch (e) {
       util.showFailureSnackBar(context, 'Oh, Something has gone wrong');
       setState(() {
-        _selectedMenuItem = 999;
+        selectedState = constants.STATE_ERROR_UNEXPECTED;
       });
       print(e);
     }
@@ -1474,14 +1497,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       contactsCopy = contacts.toList();
       _app_contact_filter();
       setState(() {
-        _selectedMenuItem = 601;
+        selectedState = constants.STATE_APP_CONTACT_ONE;
       });
       util.showSuccessSnackBar(context, 'Success, Save done.');
 
     } catch (e) {
       util.showFailureSnackBar(context, 'Oops! Save attempt failed.');
       setState(() {
-        _selectedMenuItem = 999;
+        selectedState = constants.STATE_ERROR_UNEXPECTED;
       });
       print(e);
     }
@@ -1494,14 +1517,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       contacts = await contact.findAllContacts();
       contactsCopy = contacts.toList();
       setState(() {
-        _selectedMenuItem = 6;
+        selectedState = constants.STATE_APP_CONTACT;
       });
       util.showSuccessSnackBar(context, 'Success, Delete done.');
 
     } catch (e) {
       util.showFailureSnackBar(context, 'Oops! Delete attempt failed.');
       setState(() {
-        _selectedMenuItem = 999;
+        selectedState = constants.STATE_ERROR_UNEXPECTED;
       });
       print(e);
     }
@@ -1580,7 +1603,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
   void _app_contact_show(){
     setState(() {
-      _selectedMenuItem = 6;
+      selectedState = constants.STATE_APP_CONTACT;
       WidgetsBinding.instance?.addPostFrameCallback((_) {
         // After build() method this code inside will triggers
         _scrollDown();
@@ -1605,7 +1628,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   void _app_contact_spinner_show(String lm){
     setState(() {
       load_msg = lm;
-      _selectedMenuItem = 61;
+      selectedState = constants.STATE_APP_CONTACT_SPINNER;
     });
   }
 
@@ -1760,7 +1783,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
     setState(() {
         _app_contact_one_populate();
-        _selectedMenuItem = 601;
+        selectedState = constants.STATE_APP_CONTACT_ONE;
     });
   }
 
@@ -2007,7 +2030,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       _app_contact_one_set();
     }
     setState(() {
-      _selectedMenuItem = 602;
+      selectedState = constants.STATE_APP_CONTACT_NUMBER;
     });
   }
 
