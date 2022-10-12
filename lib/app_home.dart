@@ -6,6 +6,7 @@ import 'package:android_flutter_first/main.dart' as main;
 
 // Custom widgets
 import 'package:android_flutter_first/custom_widget_icon_favorite.dart' as cwIcon;
+import 'package:android_flutter_first/custom_widget_button.dart' as cwBtn;
 // Test
 import 'package:android_flutter_first/test._dart.dart' as test;
 // App
@@ -1025,12 +1026,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           style: TextStyle(color: Colors.blue),
         ),
         cwIcon.FavoriteWidget(),
+        cwBtn.ExElevatedButton(
+            onPressed: () {
+              util.showSuccessSnackBar(context, 'ExElevatedButton pressed');
+            },
+        ),
         Expanded(
           child: Container(
             color: Colors.white,
             // child: Text('Bottom', textAlign: TextAlign.center),
-
-            //child: ,
           ),
         ),
       ],
