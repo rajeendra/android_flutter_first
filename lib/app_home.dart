@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/services.dart';
 
 import 'package:android_flutter_first/main.dart' as main;
 
@@ -21,8 +22,6 @@ import 'package:android_flutter_first/app_contact.dart' as contact;
 import 'package:android_flutter_first/app_contact_model.dart' as modelContact;
 // App album
 import 'package:android_flutter_first/app_album.dart' as album;
-import 'package:android_flutter_first/app_album_model.dart' as modelAlbum;
-import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title}) : super(key: key);
@@ -361,7 +360,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       return _buildWidgetsFullyStretched();
     }
     else if (selectedState == constants.STATE_APP_ALBUM) {
-      return _buildAsyncFutureHttp();
+      return album.Album(title: "Album");
     }
     else if (selectedState == constants.STATE_APP_CONTACT_CONFIGURATION) {
       return _app_contact_config();
@@ -693,9 +692,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   List<Widget> silverPages = <Widget>[];
   Widget _build_silvers_multiple_pages(){
     silverPages = [];
-    silverPages.add(_buildAsyncFutureHttp());
+    silverPages.add(album.Album(title: "Album"));
     silverPages.add(_app_Oops());
-    silverPages.add(_buildAsyncFutureHttp());
+    silverPages.add(album.Album(title: "Album"));
     silverPages.add(_app_Oops());
 
     return CustomScrollView(
@@ -1077,203 +1076,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
         phoneNumber: '0778987765',
         body: 'This is the text message'
     );
-  }
-
-  ///////////////////////////////////////////////////
-  //  Album app | Async http service call
-  ///////////////////////////////////////////////////
-  List<modelAlbum.Album> albums=[];
-  Widget _buildAsyncFutureHttp() {
-    Widget result;
-    if(albums.length==0){
-      result = Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _buildHeader('Async with Future<T> and HTTP'),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            color: Colors.white,
-            alignment: Alignment.center,
-            child: Row(mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.green,
-                      onPrimary: Colors.white,
-                      minimumSize: const Size(100, 40),
-                    ),
-                    onPressed: () {
-                      _httpGetAlbums();
-                    },
-                    child: const Text(
-                      'Fetch',
-                      //style: TextStyle(fontSize: 24),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.grey,
-                      onPrimary: Colors.black,
-                      minimumSize: const Size(100, 40),
-                    ),
-                    onPressed: () {
-                      _clearAlbums();
-                    },
-                    child: const Text(
-                      'Clear',
-                      //style: TextStyle(fontSize: 24),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                ]),
-          ),
-
-          Expanded(
-            child: Container(
-              color: Colors.white,
-              child: Center(
-                  child:
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    //crossAxisAlignment: CrossAxisAlignment.stretch,
-
-                    children: <Widget>[
-                      Text('Empty albums',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          //fontStyle: FontStyle.italic,
-                          fontSize: 30.0,
-                        ),
-                      ),
-                      Icon(
-                          Icons.album,
-                          size: 80.0,
-                          color: Colors.blue
-                      ),
-                      Text('Press fetch to get the albums',
-                        style: TextStyle(
-                          //fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                    ],
-                  )
-              ),
-            ),
-          ),
-        ],
-      );
-    }else{
-      result = Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _buildHeader('Async with Future<T> and HTTP'),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            color: Colors.white,
-            alignment: Alignment.center,
-            child: Row( mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.green,
-                      onPrimary: Colors.white,
-                      minimumSize: const Size(100, 40),
-                    ),
-                    onPressed: () {
-                      _httpGetAlbums();
-                    },
-                    child: const Text(
-                      'Fetch',
-                      //style: TextStyle(fontSize: 24),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.grey,
-                      onPrimary: Colors.black,
-                      minimumSize: const Size(100, 40),
-                    ),
-                    onPressed: () { _clearAlbums(); },
-                    child: const Text(
-                      'Clear',
-                      //style: TextStyle(fontSize: 24),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                ]),
-          ),
-
-          DefaultTextStyle(
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              color: Colors.white,
-              alignment: Alignment.center,
-              child: Text('Press buttons to do http and clear'),
-            ),
-            style: TextStyle(color: Colors.blue),
-          ),
-
-          Expanded(
-            child: Container(
-              color: Colors.white,
-              // child: Text('Bottom', textAlign: TextAlign.center),
-
-              child: ListView.builder(
-                  itemCount: albums.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return _tileAlum('${albums[index].title }' , '${albums[index].id}', Icons.album_outlined );
-                  }
-              ),
-            ),
-          ),
-        ],
-      );
-    }
-    return result;
-  }
-
-  ListTile _tileAlum(String title, String subtitle, IconData icon) {
-    return ListTile(
-      title: Text(title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 20,
-          )),
-      subtitle: Text(subtitle),
-
-      leading: Icon(
-        icon,
-        color: Colors.blue[500],
-      ),
-      trailing: SizedBox(
-        width: 100,
-        child: Row(
-          children: [
-            //IconButton(onPressed: () {}, icon: const Icon(Icons.favorite)),
-            IconButton(onPressed:  () {}, icon: const Icon(Icons.edit)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _httpGetAlbums() async{
-    albums = await album.fetchAlbum();
-    setState(() {
-    });
-  }
-
-  void _clearAlbums() async{
-    albums = [];
-    setState(() {
-    });
   }
 
   ///////////////////////////////////////////////////
