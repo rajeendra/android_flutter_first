@@ -1571,6 +1571,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Search',
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              txtSearchController.clear();
+                              _app_contact_filter_show();
+                            },
+                            icon: Icon(Icons.clear),
+                          ),
                         ),
                       ),
                     ),
