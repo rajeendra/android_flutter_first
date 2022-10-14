@@ -15,6 +15,19 @@ class Album extends StatefulWidget {
 
 class _AlbumStateState extends State<Album>{
 
+  late List<modelAlbum.Album> albums;
+
+  @override
+  void initState() {
+    albums=[];
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context){
     return _buildAsyncFutureHttp();
@@ -33,7 +46,6 @@ class _AlbumStateState extends State<Album>{
   ///////////////////////////////////////////////////
   //  Album app | Async http service call
   ///////////////////////////////////////////////////
-  List<modelAlbum.Album> albums=[];
   Widget _buildAsyncFutureHttp() {
     Widget result;
     if(albums.length==0){
@@ -178,7 +190,7 @@ class _AlbumStateState extends State<Album>{
               child: ListView.builder(
                   itemCount: albums.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return _tileAlum('${albums[index].title }' , '${albums[index].id}', Icons.album_outlined );
+                    return _tileAlum('${albums[index].title}' , '${albums[index].id}', Icons.album_outlined );
                   }
               ),
             ),
