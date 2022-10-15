@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_person_model.dart';
+import 'package:android_flutter_first/app_person_model.dart' as modelPerson;
 
 // Person Detail Screen
 class DetailScreen extends StatelessWidget {
@@ -8,8 +8,8 @@ class DetailScreen extends StatelessWidget {
   //BuildContext? context;
   final nameTxtController = TextEditingController();
   final addressTxtController = TextEditingController();
-  final Person person;
-  final Config config;
+  final modelPerson.Person person;
+  final modelPerson.Config config;
   //nameTxtController.text = person.name;
 
   @override
@@ -19,7 +19,7 @@ class DetailScreen extends StatelessWidget {
     nameTxtController.text = '';
     addressTxtController.text = '';
 
-    if (config.method == Config.METHOD_EDIT) {
+    if (config.method == modelPerson.Config.METHOD_EDIT) {
       nameTxtController.text = person.name;
       addressTxtController.text = person.address;
     }
@@ -73,10 +73,10 @@ class DetailScreen extends StatelessWidget {
                         minimumSize: const Size(100, 40),
                       ),
                       onPressed: () {
-                        Person person = Person(
+                        modelPerson.Person person = modelPerson.Person(
                             nameTxtController.text, addressTxtController.text);
-                        Result result = Result(config, person);
-                        Navigator.pop<Result>(context, result);
+                        modelPerson.Result result = modelPerson.Result(config, person);
+                        Navigator.pop<modelPerson.Result>(context, result);
                         //Navigator.pop(context, person);
                       },
                       child: const Text(
