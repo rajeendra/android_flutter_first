@@ -165,12 +165,14 @@ class _HomePageState extends State<HomePage>{
                 )
 
             ),
-            child: Text('Flatter layout selector'),
+            child: Text('Flatter learn app'),
           ),
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
-            title: const Text('Layout | Grid'),
+            title: const Text('Layout | Grid',
+              style: TextStyle(fontSize: 15),
+            ),
             onTap: () {
               setState(() {
                 selectedState = constants.STATE_LAYOUT_GRID;
@@ -181,7 +183,9 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
-            title: const Text('Person | List view, Dynamically grow'),
+            title: const Text('Person | List view, Dynamically grow',
+              style: TextStyle(fontSize: 15),
+            ),
             onTap: () {
               setState(() {
                 selectedState = constants.STATE_APP_PERSON;
@@ -192,7 +196,9 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
-            title: const Text('Layout | Widgets fully stretched'),
+            title: const Text('Layout | Widgets fully stretched',
+              style: TextStyle(fontSize: 15),
+            ),
             onTap: () {
               setState(() {
                 selectedState = constants.STATE_LAYOUT_FULL_STRETCHED;
@@ -203,7 +209,9 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
-            title: const Text('Album | Async http call'),
+            title: const Text('Album | Async http call',
+              style: TextStyle(fontSize: 15),
+            ),
             onTap: () {
               setState(() {
                 selectedState = constants.STATE_APP_ALBUM;
@@ -214,7 +222,9 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
-            title: const Text('Configuration'),
+            title: const Text('Configuration',
+              style: TextStyle(fontSize: 15),
+            ),
             onTap: () {
               _app_contact_config_show();
               Navigator.pop(context);
@@ -223,7 +233,9 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
-            title: const Text('Contact'),
+            title: const Text('Contact',
+              style: TextStyle(fontSize: 15),
+            ),
             onTap: () {
               setState(() {
               selectedState = constants.STATE_APP_CONTACT;
@@ -234,7 +246,9 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
-            title: const Text('Share content'),
+            title: const Text('Share content',
+              style: TextStyle(fontSize: 15),
+            ),
             onTap: () {
               setState(() {
               selectedState = constants.STATE_SHARE_CONTENT;
@@ -245,7 +259,9 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
-            title: const Text('Layout | Scrollable form'),
+            title: const Text('Layout | Scrollable form',
+              style: TextStyle(fontSize: 15),
+            ),
             onTap: () {
               setState(() {
                 selectedState = constants.STATE_LAYOUT_SCROLLABLE_FORM;
@@ -256,7 +272,9 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
-            title: const Text('Layout | Silvers'),
+            title: const Text('Layout | Silvers',
+              style: TextStyle(fontSize: 15),
+            ),
             onTap: () {
               setState(() {
                 selectedState = constants.STATE_LAYOUT_SILVERS;
@@ -267,7 +285,9 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
-            title: const Text('Silvers - Multiple pages'),
+            title: const Text('Silvers - Multiple pages',
+              style: TextStyle(fontSize: 15),
+            ),
             onTap: () {
               setState(() {
                 selectedState = constants.STATE_LAYOUT_SILVERS_PAGES;
@@ -278,7 +298,9 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
-            title: const Text('Number incrementer | ..'),
+            title: const Text('Number incrementer | ..',
+              style: TextStyle(fontSize: 15),
+            ),
             onTap: () {
               setState(() {
                 selectedState = constants.STATE_DEFAULT;

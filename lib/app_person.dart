@@ -50,7 +50,7 @@ class _PersonState extends State<Person>{
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              _buildHeader(' XXXXX List view - Dynamically growing'),
+              _buildHeader('List view - Dynamically growing'),
               Text(
                 'Press plus button to add a new person:',
               ),
