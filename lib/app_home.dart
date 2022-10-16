@@ -6,8 +6,8 @@ import 'package:camera/camera.dart';
 // main
 import 'package:android_flutter_first/main.dart' as main;
 // Custom widgets
-import 'package:android_flutter_first/custom_widget_icon_favorite.dart' as cwIcon;
-import 'package:android_flutter_first/custom_widget_button.dart' as cwBtn;
+import 'package:android_flutter_first/app_widget_icon_favorite.dart' as cwIcon;
+import 'package:android_flutter_first/app_widget_button.dart' as cwBtn;
 // Test
 import 'package:android_flutter_first/test._dart.dart' as test;
 // App
