@@ -6,8 +6,8 @@ import 'package:android_flutter_first/app_util.dart' as util;
 import 'package:android_flutter_first/app_model.dart' as model;
 import 'package:android_flutter_first/app_constants.dart' as constants;
 // App person
-import 'package:android_flutter_first/app_person_form.dart' as formPerson;
-import 'package:android_flutter_first/app_person_model.dart' as modelPerson;
+import 'package:android_flutter_first/person_form.dart' as formPerson;
+import 'package:android_flutter_first/person_model.dart' as modelPerson;
 
 class Person extends StatefulWidget {
   Person({Key? key, required this.title}) : super(key: key);

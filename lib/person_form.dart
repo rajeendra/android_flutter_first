@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:android_flutter_first/app_person_model.dart' as modelPerson;
+import 'package:android_flutter_first/person_model.dart' as modelPerson;
 
 // Person Detail Screen
 class DetailScreen extends StatelessWidget {
