@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // App album
-import 'package:android_flutter_first/app_album_service.dart' as album;
-import 'package:android_flutter_first/app_album_model.dart' as modelAlbum;
+import 'package:android_flutter_first/album_service.dart' as album;
+import 'package:android_flutter_first/album_model.dart' as modelAlbum;
 
 class Album extends StatefulWidget {
   Album({Key? key, required this.title}) : super(key: key);
