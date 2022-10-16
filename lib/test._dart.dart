@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:android_flutter_first/test_mongo_database.dart' as mongo;
 import 'package:android_flutter_first/test_model.dart' as testModel;
-import 'package:android_flutter_first/app_contact_model.dart' as contactModel;
+import 'package:android_flutter_first/contact_model.dart' as contactModel;
 import 'package:android_flutter_first/app_model.dart' as model;
 import 'package:android_flutter_first/app_util.dart' as util;
 

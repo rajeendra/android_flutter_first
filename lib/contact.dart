@@ -8,8 +8,8 @@ import 'package:android_flutter_first/app_util.dart' as util;
 import 'package:android_flutter_first/app_model.dart' as model;
 import 'package:android_flutter_first/app_constants.dart' as constants;
 // App contact
-import 'package:android_flutter_first/app_contact_service.dart' as contact;
-import 'package:android_flutter_first/app_contact_model.dart' as modelContact;
+import 'package:android_flutter_first/contact_service.dart' as contact;
+import 'package:android_flutter_first/contact_model.dart' as modelContact;
 
 class Contact extends StatefulWidget {
   Contact({Key? key, required this.title, required this.shouldTriggerChange}) : super(key: key);

@@ -17,7 +17,7 @@ import 'package:android_flutter_first/app_constants.dart' as constants;
 // App person
 import 'package:android_flutter_first/app_person.dart' as person;
 // App contact
-import 'package:android_flutter_first/app_contact.dart' as contact;
+import 'package:android_flutter_first/contact.dart' as contact;
 // App album
 import 'package:android_flutter_first/album.dart' as album;
 
