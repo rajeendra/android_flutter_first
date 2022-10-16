@@ -34,6 +34,13 @@ class _HomePageState extends State<HomePage>{
   // settings for widget messaging
   final changeNotifier = new StreamController.broadcast();
 
+  // setting up the subscription and the stream it listening to
+  // Declare the HomePage() widget's subscription ( Parent widget )
+  StreamSubscription? streamSubscription;
+  // Declare the Stream from Contact() widget ( Child widget )
+  // This initialize at the child construction time in the parent
+  late Stream<dynamic> stream;
+
   // Test data
   final fNms = List<String>.generate(30, (i) => "Fname$i Lname$i");
   final fAds = List<String>.generate(30, (i) => "10 Street$i City$i");
@@ -65,6 +72,11 @@ class _HomePageState extends State<HomePage>{
       }
     });
     super.initState();
+  }
+
+  // Test method is just to test the messages from child once they received
+  void someMethod(int data) {
+    print('DATA: $data' );
   }
 
   @override
@@ -333,12 +345,21 @@ class _HomePageState extends State<HomePage>{
     }
     else if (selectedState == constants.STATE_APP_CONTACT) {
       //return _app_contact();
-      return contact.Contact(
+      contact.Contact theContact = contact.Contact(
         title: "Contact",
 
-        // Settings for message passing from this (HomePage()) widget to Contact() widget
+        // Setting: inter widget communication between from parent to child
+        // Setting up the stream from this widget (HomePage()) to Contact() widget
         shouldTriggerChange: changeNotifier.stream,
       );
+
+      // Setting: inter widget communication between from child to parent
+      // After child construction over in the parent, get the stream from child
+      // for listening by the parent's subscription
+      stream = theContact.getStream();
+      streamSubscription = stream.listen((dynamic data) => someMethod(data));
+
+      return theContact;
     }
     else if (selectedState == constants.STATE_SHARE_CONTENT) {
       return _buildShareResources();

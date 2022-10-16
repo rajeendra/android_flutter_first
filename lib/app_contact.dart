@@ -17,6 +17,16 @@ class Contact extends StatefulWidget {
   final Stream shouldTriggerChange;
   final String title;
 
+  // Setting: inter widget communication, between, from child to parent
+  // setting up the Contact() widget's broadcaster
+  final changeNotifier = new StreamController.broadcast();
+
+  // This method enable get the stream out form here to set in the parent..
+  // ..once after this widget being constructed in the parent
+  Stream<dynamic> getStream(){
+    return changeNotifier.stream;
+  }
+
   @override
   State<Contact> createState() => _ContactState();
 }
@@ -617,7 +627,10 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
                 ),
                 onPressed: () {
                   _app_contact_one_save();
-                  //_app_contact_saveContact();
+
+                  // Setting: inter widget communication between from child to parent
+                  // just to test message passing from this widget to parent widget
+                  widget.changeNotifier.sink.add(constants.STATE_APP_CONTACT_ONE);
                 },
                 child: const Text(
                   'Save',
