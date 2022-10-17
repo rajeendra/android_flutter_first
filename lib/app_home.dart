@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -8,6 +9,7 @@ import 'package:android_flutter_first/main.dart' as main;
 // Custom widgets
 import 'package:android_flutter_first/app_widget_icon_favorite.dart' as cwIcon;
 import 'package:android_flutter_first/app_widget_button.dart' as cwBtn;
+import 'package:android_flutter_first/app_widget_container_broadcaster_subscriber.dart' as cwMc;
 // Test
 import 'package:android_flutter_first/test._dart.dart' as test;
 // App
@@ -221,6 +223,19 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
+            title: const Text('Inter widgets messaging',
+              style: TextStyle(fontSize: 15),
+            ),
+            onTap: () {
+              setState(() {
+                selectedState = constants.STATE_MESSAGE;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
             title: const Text('Album | Async http call',
               style: TextStyle(fontSize: 15),
             ),
@@ -336,6 +351,9 @@ class _HomePageState extends State<HomePage>{
     }
     else if (selectedState == constants.STATE_LAYOUT_FULL_STRETCHED) {
       return _buildWidgetsFullyStretched();
+    }
+    else if (selectedState == constants.STATE_MESSAGE) {
+      return _buildInterWidgetMessages_silver();
     }
     else if (selectedState == constants.STATE_APP_ALBUM) {
       return album.Album(title: "Album");
@@ -479,6 +497,205 @@ class _HomePageState extends State<HomePage>{
           ],
         ),
       );
+
+  ///////////////////////////////////////////////////
+  //  Module | Inter widget messaging
+  ///////////////////////////////////////////////////
+  final txtFieldController = TextEditingController();
+  String msg = '';
+
+  Widget _buildInterWidgetMessages_silver(){
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+              return Container(
+                color:  Colors.white,
+                //height: 700,
+                child: _buildInterWidgetMessages(),
+              );
+            },
+            childCount: 1,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInterWidgetMessages() => Column(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      // Expanded row has Expanded children inside a column with CrossAxisAlignment.stretch
+      _buildHeader('Inter widgets messaging'),
+        Container(
+        color: Colors.white,
+        // child: Text('Bottom', textAlign: TextAlign.center),
+        child: Column(
+          children: <Widget>[
+            DefaultTextStyle(
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                color: Colors.white,
+                alignment: Alignment.center,
+                child: Text(msg,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              style: TextStyle(color: Colors.blue),
+            ),
+            Container(
+                height: 50,
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  //child: Text('Scrollable 2 : Index $index'),
+                  child: TextField(
+                    controller: txtFieldController,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Message',
+                    ),
+                  ),
+                )),
+            Row( mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  //Button
+                  Container(
+                      height: 75,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        //child: Text('Scrollable 2 : Index $index'),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.green,
+                            onPrimary: Colors.white,
+                            minimumSize: const Size(100, 40),
+                          ),
+                          onPressed: () { SendStreamMessage(model.Message.ALL); },
+                          child: const Text(
+                            'Sink all',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      )),
+                  Container(
+                      height: 75,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        //child: Text('Scrollable 2 : Index $index'),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.green,
+                            onPrimary: Colors.white,
+                            minimumSize: const Size(100, 40),
+                          ),
+                          onPressed: () { SendStreamMessage(model.Message.CHILD_1); },
+                          child: const Text(
+                            'Sink Ch-1 ',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      )),
+                  Container(
+                      height: 75,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        //child: Text('Scrollable 2 : Index $index'),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.green,
+                            onPrimary: Colors.white,
+                            minimumSize: const Size(100, 40),
+                          ),
+                          onPressed: () { SendStreamMessage(model.Message.CHILD_2); },
+                          child: const Text(
+                            'Sink Ch-2 ',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      )),
+                ])
+          ],
+        ),
+        // child: Center(
+        //   child: Text('Bottom', textAlign: TextAlign.center),
+        // ),
+      ),
+      _buildBSContainer("First Child Widget"),
+      _buildBSContainer("Second Child Widget"),
+    ],
+  );
+
+  Widget _buildBSContainer(String title){
+    cwMc.BSContainer childWidget = cwMc.BSContainer(
+      title: title,
+
+      // Setting: inter widget communication between from parent to child
+
+      // Stream goes in to child from parent
+      streamIn: changeNotifier.stream,
+    );
+
+    // Setting: inter widget communication between from child to parent
+    // After child construction over in the parent, get the stream from child
+    // for listening by the parent's subscription
+
+    // Stream from child to parent
+    stream = childWidget.getStream();
+    // Parent listening to the stream coming from child
+    streamSubscription = stream.listen((dynamic data) => respondOnMessageReceived(data));
+
+    return childWidget;
+  }
+
+  void respondOnMessageReceived(String data){
+    print('DATA: $data' );
+    // setState(() {
+    //   msg = data;
+    // });
+
+    Map<String,dynamic> valueMap = jsonDecode(data);
+    model.Message message = model.Message.fromJson(valueMap);
+    if(message.receiver==model.Message.PARENT){
+      setState(() {
+        msg = message.message;
+      });
+    }else{
+      changeNotifier.sink.add(data);
+    }
+  }
+
+  void SendStreamMessage(String toWidget){
+
+    model.Message message = model.Message(
+        sender: model.Message.PARENT,
+        receiver: toWidget,
+        message: txtFieldController.text
+    );
+
+    String str = jsonEncode(message);
+
+    //changeNotifier.sink.add(null);
+    //changeNotifier.sink.add("Data!");
+
+    // Example of inter widget communication
+    // Send Stream data from HomePage() widget to Contact() widget
+    // Broadcaster (changeNotifier) sending Stream data to subscriber
+    changeNotifier.sink.add(str);
+  }
+
+  ///////////////////////////////////////////////////
+  //
+  ///////////////////////////////////////////////////
 
   // 8. Scrollable data entry screen
   final ScrollController _firstController = ScrollController();
