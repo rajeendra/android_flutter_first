@@ -64,7 +64,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
     //streamSubscription = widget.shouldTriggerChange.listen((dynamic data) => someMethod(data));
     streamSubscription = widget.shouldTriggerChange.listen((dynamic data) => newContact(data));
 
-    _mongoAtlas_contacts();
+    _setCachedContacts();
   }
 
   @override
@@ -222,10 +222,20 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
     );
   }
 
+  void _setCachedContacts() async{
+    contacts = await contact.getCachedContacts();
+    contactsCopy = contacts.toList();
+    _app_contact_filter();
+    setState(() {
+      selectedState = constants.STATE_APP_CONTACT;
+    });
+  }
+
   void _mongoAtlas_contacts() async{
     try {
       _app_contact_spinner_show('Loading...');
       contacts = await contact.findAllContacts();
+      contact.cacheContacts(contacts);
       contactsCopy = contacts.toList();
       _app_contact_filter();
       setState(() {
@@ -248,6 +258,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
       _app_contact_spinner_show('Saving...');
       await contact.saveContact(oneContact);
       contacts = await contact.findAllContacts();
+      contact.cacheContacts(contacts);
       contactsCopy = contacts.toList();
       _app_contact_filter();
       setState(() {
@@ -269,6 +280,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
       _app_contact_spinner_show('Deleting...');
       await contact.deleteContact(_id);
       contacts = await contact.findAllContacts();
+      contact.cacheContacts(contacts);
       contactsCopy = contacts.toList();
       setState(() {
         selectedState = constants.STATE_APP_CONTACT;
@@ -306,9 +318,9 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
                     width: 5,
                   ),
                   IconButton(
-                    icon: const Icon(Icons.search),
-                    tooltip: 'Increase volume by 10',
-                    onPressed: () {_app_contact_filter_show();},
+                    icon: const Icon(Icons.sync),
+                    tooltip: 'Sync',
+                    onPressed: () {_mongoAtlas_contacts();},
                   ),
                   const SizedBox(
                     width: 5,
@@ -339,6 +351,15 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
                   const SizedBox(
                     width: 5,
                   ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    tooltip: 'Filter contacts',
+                    onPressed: () {_app_contact_filter_show();},
+                  ),
+
                 ]),
           ]),
         ),
