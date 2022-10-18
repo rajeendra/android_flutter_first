@@ -55,24 +55,28 @@ class _HomePageState extends State<HomePage>{
 
   @override
   void initState() {
-    cameraController = CameraController( main.cameras[0], ResolutionPreset.max);
-    cameraController.initialize().then((_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    }).catchError((Object e) {
-      if (e is CameraException) {
-        switch (e.code) {
-          case 'CameraAccessDenied':
-            print('User denied camera access.');
-            break;
-          default:
-            print('Handle other errors.');
-            break;
+
+    if(main.isCameraEnabled) {
+      cameraController =
+          CameraController(main.cameras[0], ResolutionPreset.max);
+      cameraController.initialize().then((_) {
+        if (!mounted) {
+          return;
         }
-      }
-    });
+        setState(() {});
+      }).catchError((Object e) {
+        if (e is CameraException) {
+          switch (e.code) {
+            case 'CameraAccessDenied':
+              print('User denied camera access.');
+              break;
+            default:
+              print('Handle other errors.');
+              break;
+          }
+        }
+      });
+    }
     super.initState();
   }
 
@@ -114,7 +118,9 @@ class _HomePageState extends State<HomePage>{
       changeNotifier.sink.add(constants.STATE_MODULE_CONTACT);
 
     } else if(selectedState==constants.STATE_SHARE_CONTENT_CAMERA){
-      _camera_take_picture();
+      if(main.isCameraEnabled) {
+        _camera_take_picture();
+      }
     } else if(selectedState==constants.STATE_LAYOUT_SILVERS){
       setState(() {
         topIntSilvers.add(-topIntSilvers.length - 1);
@@ -1022,21 +1028,25 @@ class _HomePageState extends State<HomePage>{
           alignment: Alignment.center,
           child: Row( mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.green,
-                    onPrimary: Colors.white,
-                    minimumSize: const Size(100, 40),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      selectedState = constants.STATE_SHARE_CONTENT_CAMERA;
-                    });
-                  },
-                  child: const Text(
-                    'Camera',
-                    //style: TextStyle(fontSize: 24),
-                  ),
+                IgnorePointer(
+                    ignoring: !main.isCameraEnabled,
+                    child: ElevatedButton(
+
+                      style: ElevatedButton.styleFrom(
+                        primary: main.isCameraEnabled ? Colors.green : Colors.grey,
+                        onPrimary: main.isCameraEnabled ? Colors.white : Colors.black38,
+                        minimumSize: const Size(100, 40),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          selectedState = constants.STATE_SHARE_CONTENT_CAMERA;
+                        });
+                      },
+                      child: const Text(
+                        'Camera',
+                        //style: TextStyle(fontSize: 24),
+                      ),
+                    ),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
