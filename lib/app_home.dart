@@ -7,9 +7,9 @@ import 'package:camera/camera.dart';
 // main
 import 'package:android_flutter_first/main.dart' as main;
 // Custom widgets
-import 'package:android_flutter_first/app_widget_icon_favorite.dart' as cwIcon;
-import 'package:android_flutter_first/app_widget_button.dart' as cwBtn;
-import 'package:android_flutter_first/app_widget_container_broadcaster_subscriber.dart' as cwMc;
+import 'package:android_flutter_first/app_widget_icon_favorite.dart' as cw;
+import 'package:android_flutter_first/app_widget_button.dart' as cw;
+import 'package:android_flutter_first/app_widget_container_broadcaster_subscriber.dart' as cw;
 // Test
 import 'package:android_flutter_first/test._dart.dart' as test;
 // App
@@ -636,7 +636,7 @@ class _HomePageState extends State<HomePage>{
   );
 
   Widget _buildBSContainer(String title){
-    cwMc.BSContainer childWidget = cwMc.BSContainer(
+    cw.BSContainer childWidget = cw.BSContainer(
       title: title,
 
       // Setting: inter widget communication between from parent to child
@@ -1077,13 +1077,13 @@ class _HomePageState extends State<HomePage>{
           ),
           style: TextStyle(color: Colors.blue),
         ),
-        cwIcon.FavoriteWidget(),
-        cwBtn.ExElevatedButton(
+        cw.FavoriteWidget(),
+        cw.ExElevatedButton(
             onPressed: () {
               util.showSuccessSnackBar(context, 'ExElevatedButton pressed');
             },
         ),
-        cwBtn.ExElevatedButton(
+        cw.ExElevatedButton(
           onPressed: () {
             util.showSuccessSnackBar(context, 'ExElevatedButton pressed');
           },

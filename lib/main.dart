@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:android_flutter_first/app_home.dart' as hp;
+import 'package:android_flutter_first/app_home.dart' as app;
 import 'package:camera/camera.dart';
 
 late List<CameraDescription> cameras;
@@ -33,7 +33,7 @@ Widget buildMaterialApp(BuildContext context){
       // Each build() has its own Build context and the State currently its in
       // Each time you call setSate() only run the build() in the current state where the setSate() is call
 
-      home: hp.HomePage(title: 'Test App', key: ValueKey<String>("wyewriyweu"))
+      home: app.HomePage(title: 'Test App', key: ValueKey<String>("wyewriyweu"))
   );
 }
 

@@ -1,37 +1,36 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:android_flutter_first/app_constants.dart' as constants;
-import 'package:android_flutter_first/app_util.dart' as util;
-import 'package:android_flutter_first/app_model.dart' as model;
-import 'package:android_flutter_first/contact_model.dart' as dm;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:android_flutter_first/app_constants.dart' as constants;
+import 'package:android_flutter_first/app_util.dart' as appUtil;
+import 'package:android_flutter_first/app_model.dart' as appModel;
+import 'package:android_flutter_first/contact_model.dart' as model;
 
 var user = '<user>';
 var password = '<password>';
 
 app_setCredentials() async {
-  model.AppConfiguration appConfiguration = await util.AppUtil.getAppConfig();
+  appModel.AppConfiguration appConfiguration = await appUtil.AppUtil.getAppConfig();
   user = appConfiguration.user ?? '';
   password = appConfiguration.password ?? '';
 }
 
 // Get all contacts
-Future<List<dm.Contact>> findAllContacts() async{
-  List<dm.Contact> contacts = [];
+Future<List<model.Contact>> findAllContacts() async{
+  List<model.Contact> contacts = [];
 
   await app_setCredentials();
   List<Map<String, dynamic>> result = await _findCollection();
 
   result.forEach((element) {
-    dm.Contact contact = dm.Contact.fromJson(element);
+    model.Contact contact = model.Contact.fromJson(element);
     contacts.add(contact);
   });
   return await contacts;
 }
 
-Future<void> saveContact(dm.Contact contact) async{
+Future<void> saveContact(model.Contact contact) async{
   String? _id = contact.id;
   await app_setCredentials();
 
@@ -58,21 +57,21 @@ Future<void> deleteContact(String _id) async{
   return null;
 }
 
-Future<void> cacheContacts(List<dm.Contact> contacts) async {
+Future<void> cacheContacts(List<model.Contact> contacts) async {
   Map<String,dynamic> mapContacts = Map();
   mapContacts["contacts"] = contacts;
   String strContacts = jsonEncode(mapContacts);
   _cacheContacts(strContacts);
 }
 
-Future<List<dm.Contact>> getCachedContacts() async{
-  List<dm.Contact> contacts = [];
+Future<List<model.Contact>> getCachedContacts() async{
+  List<model.Contact> contacts = [];
   String strContacts = await _getCachedContact();
   if( strContacts.length > 0 ){
     Map<String, dynamic> contactsMap = jsonDecode(strContacts);
     List<dynamic> result = contactsMap['contacts'];
     result.forEach((element) {
-      dm.Contact contact = dm.Contact.fromJson(element,source: 'local');
+      model.Contact contact = model.Contact.fromJson(element,source: 'local');
       contacts.add(contact);
     });
   }
@@ -93,7 +92,7 @@ Future< List<Map<String, dynamic>> > _findCollection() async {
   return await cts;
 }
 
-Future<void>  _insertDocument(dm.Contact contact) async {
+Future<void>  _insertDocument(model.Contact contact) async {
   Map<String, dynamic> result;
 
   final db = await Db.create(
@@ -104,7 +103,7 @@ Future<void>  _insertDocument(dm.Contact contact) async {
   await db.close();
 }
 
-Future<void>  _updateDocumentByID(String id, dm.Contact contact) async {
+Future<void>  _updateDocumentByID(String id, model.Contact contact) async {
   Map<String, dynamic> result;
   ObjectId objId = ObjectId.parse(id);
 

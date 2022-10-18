@@ -2,12 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // App
-import 'package:android_flutter_first/app_util.dart' as util;
-import 'package:android_flutter_first/app_model.dart' as model;
-import 'package:android_flutter_first/app_constants.dart' as constants;
+import 'package:android_flutter_first/app_util.dart' as appUtil;
 // App person
 import 'package:android_flutter_first/person_form.dart' as formPerson;
-import 'package:android_flutter_first/person_model.dart' as modelPerson;
+import 'package:android_flutter_first/person_model.dart' as model;
 
 class Person extends StatefulWidget {
   Person({Key? key, required this.title}) : super(key: key);
@@ -19,7 +17,7 @@ class Person extends StatefulWidget {
 }
 
 class _PersonState extends State<Person>{
-  List<modelPerson.Person> persons=[];
+  List<model.Person> persons=[];
 
   @override
   Widget build(BuildContext context){
@@ -72,7 +70,7 @@ class _PersonState extends State<Person>{
       floatingActionButton: FloatingActionButton(
         //onPressed: _onPressedFloatingActionButton,
         onPressed: (){
-          _addOrEditPerson(context,modelPerson.Person('',''),modelPerson.Config(modelPerson.Config.METHOD_ADD));
+          _addOrEditPerson(context,model.Person('',''),model.Config(model.Config.METHOD_ADD));
         },
         tooltip: 'add person',
         backgroundColor: Colors.blue,
@@ -99,7 +97,7 @@ class _PersonState extends State<Person>{
         child: Row(
           children: [
             //IconButton(onPressed: () {}, icon: const Icon(Icons.favorite)),
-            IconButton(onPressed:  () { _addOrEditPerson(context,persons[index],modelPerson.Config(modelPerson.Config.METHOD_EDIT,intValue:index)); }, icon: const Icon(Icons.edit)),
+            IconButton(onPressed:  () { _addOrEditPerson(context,persons[index],model.Config(model.Config.METHOD_EDIT,intValue:index)); }, icon: const Icon(Icons.edit)),
             IconButton(onPressed: () { _deletePerson(index); }, icon: const Icon(Icons.delete)),
           ],
         ),
@@ -117,10 +115,10 @@ class _PersonState extends State<Person>{
 
   // Navigate to person edit screen and return back with the data holding in <Result> object
   // Show SnackBar with a message
-  Future<void> _addOrEditPerson(BuildContext context, modelPerson.Person person, modelPerson.Config config) async {
+  Future<void> _addOrEditPerson(BuildContext context, model.Person person, model.Config config) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    final modelPerson.Result result = await Navigator.push(
+    final model.Result result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => formPerson.DetailScreen(person: person, config: config,) ),
     );
@@ -131,7 +129,7 @@ class _PersonState extends State<Person>{
 
     String name = result.person.name;
 
-    if(result.config.method==modelPerson.Config.METHOD_ADD){
+    if(result.config.method==model.Config.METHOD_ADD){
       persons.insert(0, result.person);
     } else {
       persons[result.config.intValue]=result.person;
@@ -143,7 +141,7 @@ class _PersonState extends State<Person>{
 
     // After the Selection Screen returns a result, hide any previous snackbars
     // and show the new result.
-    util.showSuccessSnackBar(context, ' Person $name successfully saved. ');
+    appUtil.showSuccessSnackBar(context, ' Person $name successfully saved. ');
 
     // ScaffoldMessenger.of(context)
     //   ..removeCurrentSnackBar()
@@ -189,7 +187,7 @@ class _PersonState extends State<Person>{
                 setState(() {
                   persons.removeAt(index);
                 });
-                util.showSuccessSnackBar(context, ' Person $name successfully removed. ');
+                appUtil.showSuccessSnackBar(context, ' Person $name successfully removed. ');
               },
               child: const Text('OK'),
             ),

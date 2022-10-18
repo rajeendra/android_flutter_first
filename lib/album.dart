@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // App album
 import 'package:android_flutter_first/album_service.dart' as album;
-import 'package:android_flutter_first/album_model.dart' as modelAlbum;
+import 'package:android_flutter_first/album_model.dart' as model;
 
 class Album extends StatefulWidget {
   Album({Key? key, required this.title}) : super(key: key);
@@ -15,7 +15,7 @@ class Album extends StatefulWidget {
 
 class _AlbumStateState extends State<Album>{
 
-  late List<modelAlbum.Album> albums;
+  late List<model.Album> albums;
 
   @override
   void initState() {

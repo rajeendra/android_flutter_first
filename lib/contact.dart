@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // App
-import 'package:android_flutter_first/app_util.dart' as util;
-import 'package:android_flutter_first/app_model.dart' as model;
+import 'package:android_flutter_first/app_util.dart' as appUtil;
+import 'package:android_flutter_first/app_model.dart' as appModel;
 import 'package:android_flutter_first/app_constants.dart' as constants;
 // App contact
 import 'package:android_flutter_first/contact_service.dart' as contact;
-import 'package:android_flutter_first/contact_model.dart' as modelContact;
+import 'package:android_flutter_first/contact_model.dart' as model;
 
 class Contact extends StatefulWidget {
   Contact({Key? key, required this.title, required this.shouldTriggerChange}) : super(key: key);
@@ -158,11 +158,11 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
   //  Contacts app
   ///////////////////////////////////////////////////
 
-  List<modelContact.Contact> contacts = [];
-  List<modelContact.Contact> contactsCopy = [];
-  modelContact.Contact? selectedContact;
-  modelContact.Number? selectedNumber;
-  model.AppConfiguration appContactConfiguration=model.AppConfiguration();
+  List<model.Contact> contacts = [];
+  List<model.Contact> contactsCopy = [];
+  model.Contact? selectedContact;
+  model.Number? selectedNumber;
+  appModel.AppConfiguration appContactConfiguration=appModel.AppConfiguration();
 
   final txtUserController  = TextEditingController();
   final txtPassController = TextEditingController();
@@ -242,10 +242,10 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
         selectedState = constants.STATE_MODULE_CONTACT;
       });
       String count = contacts.length.toString();
-      util.showSuccessSnackBar(context, 'Success, $count contacts fetched');
+      appUtil.showSuccessSnackBar(context, 'Success, $count contacts fetched');
 
     } catch (e) {
-      util.showFailureSnackBar(context, 'Oh, Something has gone wrong');
+      appUtil.showFailureSnackBar(context, 'Oh, Something has gone wrong');
       setState(() {
         selectedState = constants.STATE_ERROR_UNEXPECTED;
       });
@@ -253,7 +253,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
     }
   }
 
-  void _mongoAtlas_contact_save(modelContact.Contact oneContact) async{
+  void _mongoAtlas_contact_save(model.Contact oneContact) async{
     try {
       _app_contact_spinner_show('Saving...');
       await contact.saveContact(oneContact);
@@ -264,10 +264,10 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
       setState(() {
         selectedState = constants.STATE_MODULE_CONTACT_ONE;
       });
-      util.showSuccessSnackBar(context, 'Success, Save done.');
+      appUtil.showSuccessSnackBar(context, 'Success, Save done.');
 
     } catch (e) {
-      util.showFailureSnackBar(context, 'Oops! Save attempt failed.');
+      appUtil.showFailureSnackBar(context, 'Oops! Save attempt failed.');
       setState(() {
         selectedState = constants.STATE_ERROR_UNEXPECTED;
       });
@@ -285,10 +285,10 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
       setState(() {
         selectedState = constants.STATE_MODULE_CONTACT;
       });
-      util.showSuccessSnackBar(context, 'Success, Delete done.');
+      appUtil.showSuccessSnackBar(context, 'Success, Delete done.');
 
     } catch (e) {
-      util.showFailureSnackBar(context, 'Oops! Delete attempt failed.');
+      appUtil.showFailureSnackBar(context, 'Oops! Delete attempt failed.');
       setState(() {
         selectedState = constants.STATE_ERROR_UNEXPECTED;
       });
@@ -471,13 +471,13 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
     );
   }
 
-  List<modelContact.Contact> _app_contact_filter() {
+  List<model.Contact> _app_contact_filter() {
     var value = txtSearchController.text;
 
-    List<modelContact.Contact> filteredContacts = [];
+    List<model.Contact> filteredContacts = [];
     if (value.toString().trim().length > 0) {
       contactsCopy.forEach((element) {
-        modelContact.Contact contact = element;
+        model.Contact contact = element;
         if (contact.fname
             .toString()
             .toLowerCase()
@@ -571,9 +571,9 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
     );
   }
 
-  modelContact.Contact _app_contact_new_contact(){
-    List<modelContact.Number> numbers = [];
-    modelContact.Contact contact = new modelContact.Contact(numbers: numbers );
+  model.Contact _app_contact_new_contact(){
+    List<model.Number> numbers = [];
+    model.Contact contact = new model.Contact(numbers: numbers );
     contact?.active = 'Y';
     return contact;
   }
@@ -596,7 +596,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
       //selectedContact = contacts[index];
 
       // Creating a new Contact object from edit to till save or cancel changes
-      selectedContact = modelContact.Contact.fromJson(contacts[index].toJson(),source: 'local');
+      selectedContact = model.Contact.fromJson(contacts[index].toJson(),source: 'local');
 
     setState(() {
       _app_contact_one_populate();
@@ -767,7 +767,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
   }
 
   Future<void> _app_contact_one_dialCall(String phoneNumber) async {
-    util.dialCall(phoneNumber);
+    appUtil.dialCall(phoneNumber);
   }
 
   Future<void> _app_contact_one_delete_number(int index) async {
@@ -799,7 +799,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
                 setState(() {
                   selectedContact?.numbers.removeAt(index);
                 });
-                util.showSuccessSnackBar(context, 'Number $name removed. ');
+                appUtil.showSuccessSnackBar(context, 'Number $name removed. ');
                 _app_contact_one_show(-1);
               },
               child: const Text('OK'),
@@ -812,7 +812,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
 
   void _app_contact_one_save(){
     _app_contact_one_set();
-    modelContact.Contact contact = selectedContact ?? _app_contact_new_contact();
+    model.Contact contact = selectedContact ?? _app_contact_new_contact();
     print('OK');
     _mongoAtlas_contact_save(contact);
   }
@@ -1028,7 +1028,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
       selectedNumber?.type = type;
     }else{
       selectedContact?.addNumber(
-          modelContact.Number(
+          model.Number(
             number: txtNumberController.text,
             type: type,
           )
