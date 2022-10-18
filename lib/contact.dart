@@ -308,78 +308,113 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
             const SizedBox(
               height: 5,
             ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  // const SizedBox(
-                  //   width: 5,
-                  // ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.sync),
-                    tooltip: 'Sync',
-                    onPressed: () {_mongoAtlas_contacts();},
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Expanded(
-                    child: Container(
-                      color: Colors.white,
-                      // child: Text('Bottom', textAlign: TextAlign.center),
+            Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+              // const SizedBox(
+              //   width: 5,
+              // ),
+              const SizedBox(
+                width: 5,
+              ),
+              IconButton(
+                icon: const Icon(Icons.sync),
+                tooltip: 'Sync',
+                onPressed: () {
+                  _mongoAtlas_contacts();
+                },
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  // child: Text('Bottom', textAlign: TextAlign.center),
 
-                      child: TextField(
-                        controller: txtSearchController,
-                        //onChanged: (value) => filterContacts(value),
-                        obscureText: false,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Search',
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              txtSearchController.clear();
-                              _app_contact_filter_show();
-                            },
-                            icon: Icon(Icons.clear),
-                          ),
-                        ),
+                  child: TextField(
+                    controller: txtSearchController,
+                    //onChanged: (value) => filterContacts(value),
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Search',
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          txtSearchController.clear();
+                          _app_contact_filter_show();
+                        },
+                        icon: Icon(Icons.clear),
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.search),
-                    tooltip: 'Filter contacts',
-                    onPressed: () {_app_contact_filter_show();},
-                  ),
-
-                ]),
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              IconButton(
+                icon: const Icon(Icons.search),
+                tooltip: 'Filter contacts',
+                onPressed: () {
+                  _app_contact_filter_show();
+                },
+              ),
+            ]),
           ]),
         ),
-        Expanded(
-          child: Container(
-            color: Colors.white,
-            // child: Text('Bottom', textAlign: TextAlign.center),
+        contacts.length == 0
+            ? _app_Oops_NO_Contacts()
+            : Expanded(
+                child: Container(
+                  color: Colors.white,
+                  // child: Text('Bottom', textAlign: TextAlign.center),
 
-            child: ListView.builder(
-                controller: _scrollController,
-                itemCount: contacts.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _app_contact_tile( index,
-                      '${contacts[index].fname} ${contacts[index].lname}',
-                      '${contacts[index].cpse}',
-                      Icons.person);
-                }),
-          ),
-        ),
+                  child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount: contacts.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return _app_contact_tile(
+                            index,
+                            '${contacts[index].fname} ${contacts[index].lname}',
+                            '${contacts[index].cpse}',
+                            Icons.person);
+                      }),
+                ),
+              ),
       ],
+    );
+  }
+
+  Widget _app_Oops_NO_Contacts() {
+    return Expanded(
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Oops!!!',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                //fontStyle: FontStyle.italic,
+                fontSize: 30.0,
+              ),
+            ),
+            Icon(Icons.contacts, size: 80.0, color: Colors.blue),
+            Text(
+              'Refresh to get the contacts',
+              style: TextStyle(
+                //fontWeight: FontWeight.bold,
+                fontStyle: FontStyle.italic,
+                fontSize: 16.0,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -390,7 +425,6 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
         // After build() method this code inside will triggers
         _scrollDown();
       });
-
     });
   }
 
