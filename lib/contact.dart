@@ -31,24 +31,16 @@ class Contact extends StatefulWidget {
   State<Contact> createState() => _ContactState();
 }
 
-class _ContactState extends State<Contact> with TickerProviderStateMixin{
+class _ContactState extends State<Contact> {
   // inter widget communication - setting up receiver
   StreamSubscription? streamSubscription;
 
   int selectedState = constants.STATE_MODULE_CONTACT;
-  late AnimationController controller;
   late ScrollController _scrollController;
   double _offset = 0.0;
 
   @override
   void initState(){
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..addListener(() {
-      setState(() {});
-    });
-    controller.repeat(reverse: false);
     _scrollController = ScrollController()
       ..addListener(() {
         // when ListView gets scroll _offset will update
@@ -70,7 +62,6 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    controller.dispose();
     _scrollController.dispose();
     streamSubscription?.cancel();
     super.dispose();
@@ -461,7 +452,6 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
             color: Colors.white,
             child: Center(
               child: CircularProgressIndicator(
-                value: controller.value,
                 semanticsLabel: 'Circular progress indicator',
               ),
             ),
