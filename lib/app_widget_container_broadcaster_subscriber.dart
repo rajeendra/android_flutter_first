@@ -61,7 +61,7 @@ class _BSContainerState extends State<BSContainer>{
   //   void _onPressedFloatingActionButton() {
   //   if(selectedState==constants.STATE_DEFAULT){
   //     //_incrementCounter();
-  //   } else if (selectedState == constants.STATE_APP_CONTACT) {
+  //   } else if (selectedState == constants.STATE_MODULE_CONTACT) {
   //     // At _app_contact
   //
   //     //changeNotifier.sink.add(null);
@@ -70,7 +70,7 @@ class _BSContainerState extends State<BSContainer>{
   //     // Example of inter widget communication
   //     // Send Stream data from HomePage() widget to Contact() widget
   //     // Broadcaster (changeNotifier) sending Stream data to subscriber
-  //     changeNotifier.sink.add(constants.STATE_APP_CONTACT);
+  //     changeNotifier.sink.add(constants.STATE_MODULE_CONTACT);
   //   }
   // }
 

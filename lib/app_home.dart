@@ -98,11 +98,11 @@ class _HomePageState extends State<HomePage>{
   void _onPressedFloatingActionButton() {
     if(selectedState==constants.STATE_DEFAULT){
       _incrementCounter();
-    } else if(selectedState==constants.STATE_APP_PERSON){
+    } else if(selectedState==constants.STATE_MODULE_PERSON){
 
     } else if(selectedState==constants.STATE_LAYOUT_FULL_STRETCHED){
       test.mainTest(context);
-    } else if (selectedState == constants.STATE_APP_CONTACT) {
+    } else if (selectedState == constants.STATE_MODULE_CONTACT) {
       // At _app_contact
 
       //changeNotifier.sink.add(null);
@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage>{
       // Example of inter widget communication
       // Send Stream data from HomePage() widget to Contact() widget
       // Broadcaster (changeNotifier) sending Stream data to subscriber
-      changeNotifier.sink.add(constants.STATE_APP_CONTACT);
+      changeNotifier.sink.add(constants.STATE_MODULE_CONTACT);
 
     } else if(selectedState==constants.STATE_SHARE_CONTENT_CAMERA){
       _camera_take_picture();
@@ -202,7 +202,7 @@ class _HomePageState extends State<HomePage>{
             ),
             onTap: () {
               setState(() {
-                selectedState = constants.STATE_APP_PERSON;
+                selectedState = constants.STATE_MODULE_PERSON;
               });
               Navigator.pop(context);
             },
@@ -241,7 +241,7 @@ class _HomePageState extends State<HomePage>{
             ),
             onTap: () {
               setState(() {
-                selectedState = constants.STATE_APP_ALBUM;
+                selectedState = constants.STATE_MODULE_ALBUM;
               });
               Navigator.pop(context);
             },
@@ -265,7 +265,7 @@ class _HomePageState extends State<HomePage>{
             ),
             onTap: () {
               setState(() {
-              selectedState = constants.STATE_APP_CONTACT;
+              selectedState = constants.STATE_MODULE_CONTACT;
               });
               Navigator.pop(context);
             },
@@ -345,7 +345,7 @@ class _HomePageState extends State<HomePage>{
     if (selectedState == constants.STATE_LAYOUT_GRID) {
       return _buildGridUI();
     }
-    else if (selectedState == constants.STATE_APP_PERSON) {
+    else if (selectedState == constants.STATE_MODULE_PERSON) {
       isFAButtonVisible = false;
       return person.Person(title: "Person",);
     }
@@ -355,13 +355,13 @@ class _HomePageState extends State<HomePage>{
     else if (selectedState == constants.STATE_MESSAGE) {
       return _buildInterWidgetMessages_silver();
     }
-    else if (selectedState == constants.STATE_APP_ALBUM) {
+    else if (selectedState == constants.STATE_MODULE_ALBUM) {
       return album.Album(title: "Album");
     }
-    else if (selectedState == constants.STATE_APP_CONFIGURATION) {
+    else if (selectedState == constants.STATE_MODULE_CONFIGURATION) {
       return _app_contact_config();
     }
-    else if (selectedState == constants.STATE_APP_CONTACT) {
+    else if (selectedState == constants.STATE_MODULE_CONTACT) {
       //return _app_contact();
       contact.Contact theContact = contact.Contact(
         title: "Contact",
@@ -1124,7 +1124,7 @@ class _HomePageState extends State<HomePage>{
   Future<void> _app_contact_config_show() async {
     await _app_contact_getCredentials();
     setState(() {
-      selectedState = constants.STATE_APP_CONFIGURATION;
+      selectedState = constants.STATE_MODULE_CONFIGURATION;
     });
   }
 

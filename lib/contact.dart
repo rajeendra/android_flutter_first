@@ -35,7 +35,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
   // inter widget communication - setting up receiver
   StreamSubscription? streamSubscription;
 
-  int selectedState = constants.STATE_APP_CONTACT;
+  int selectedState = constants.STATE_MODULE_CONTACT;
   late AnimationController controller;
   late ScrollController _scrollController;
   double _offset = 0.0;
@@ -101,7 +101,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
   Widget _buildSelectedBody() {
     Widget result = _app_contact();
 
-    if (selectedState == constants.STATE_APP_CONTACT_ONE) {
+    if (selectedState == constants.STATE_MODULE_CONTACT_ONE) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
@@ -115,13 +115,13 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
       ]);
     }
 
-    if (selectedState == constants.STATE_APP_CONTACT_ONE) {
+    if (selectedState == constants.STATE_MODULE_CONTACT_ONE) {
       result = _app_contact_one();
     }
-    else if (selectedState == constants.STATE_APP_CONTACT_NUMBER) {
+    else if (selectedState == constants.STATE_MODULE_CONTACT_NUMBER) {
       result = _app_contact_number_silver();
     }
-    else if (selectedState == constants.STATE_APP_CONTACT_SPINNER) {
+    else if (selectedState == constants.STATE_MODULE_CONTACT_SPINNER) {
       result = _app_contact_spinner();
     }
     else if (selectedState == constants.STATE_ERROR_UNEXPECTED) {
@@ -131,13 +131,13 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
   }
 
   void newContact(int state) {
-    if(state == constants.STATE_APP_CONTACT){
-      if(selectedState==constants.STATE_APP_CONTACT){
+    if(state == constants.STATE_MODULE_CONTACT){
+      if(selectedState==constants.STATE_MODULE_CONTACT){
         // At _app_contact
         selectedContact = _app_contact_new_contact();
         _app_contact_one_show(-1);
       }
-      else if(selectedState==constants.STATE_APP_CONTACT_ONE){
+      else if(selectedState==constants.STATE_MODULE_CONTACT_ONE){
         // At _app_contact_one
         _app_contact_number_show(-1);
       }
@@ -227,7 +227,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
     contactsCopy = contacts.toList();
     _app_contact_filter();
     setState(() {
-      selectedState = constants.STATE_APP_CONTACT;
+      selectedState = constants.STATE_MODULE_CONTACT;
     });
   }
 
@@ -239,7 +239,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
       contactsCopy = contacts.toList();
       _app_contact_filter();
       setState(() {
-        selectedState = constants.STATE_APP_CONTACT;
+        selectedState = constants.STATE_MODULE_CONTACT;
       });
       String count = contacts.length.toString();
       util.showSuccessSnackBar(context, 'Success, $count contacts fetched');
@@ -262,7 +262,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
       contactsCopy = contacts.toList();
       _app_contact_filter();
       setState(() {
-        selectedState = constants.STATE_APP_CONTACT_ONE;
+        selectedState = constants.STATE_MODULE_CONTACT_ONE;
       });
       util.showSuccessSnackBar(context, 'Success, Save done.');
 
@@ -283,7 +283,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
       contact.cacheContacts(contacts);
       contactsCopy = contacts.toList();
       setState(() {
-        selectedState = constants.STATE_APP_CONTACT;
+        selectedState = constants.STATE_MODULE_CONTACT;
       });
       util.showSuccessSnackBar(context, 'Success, Delete done.');
 
@@ -420,7 +420,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
 
   void _app_contact_show(){
     setState(() {
-      selectedState = constants.STATE_APP_CONTACT;
+      selectedState = constants.STATE_MODULE_CONTACT;
       WidgetsBinding.instance?.addPostFrameCallback((_) {
         // After build() method this code inside will triggers
         _scrollDown();
@@ -445,7 +445,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
   void _app_contact_spinner_show(String lm){
     setState(() {
       load_msg = lm;
-      selectedState = constants.STATE_APP_CONTACT_SPINNER;
+      selectedState = constants.STATE_MODULE_CONTACT_SPINNER;
     });
   }
 
@@ -600,7 +600,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
 
     setState(() {
       _app_contact_one_populate();
-      selectedState = constants.STATE_APP_CONTACT_ONE;
+      selectedState = constants.STATE_MODULE_CONTACT_ONE;
     });
   }
 
@@ -685,7 +685,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
 
                   // Setting: inter widget communication between from child to parent
                   // just to test message passing from this widget to parent widget
-                  widget.changeNotifier.sink.add(constants.STATE_APP_CONTACT_ONE);
+                  widget.changeNotifier.sink.add(constants.STATE_MODULE_CONTACT_ONE);
                 },
                 child: const Text(
                   'Save',
@@ -850,7 +850,7 @@ class _ContactState extends State<Contact> with TickerProviderStateMixin{
       _app_contact_one_set();
     }
     setState(() {
-      selectedState = constants.STATE_APP_CONTACT_NUMBER;
+      selectedState = constants.STATE_MODULE_CONTACT_NUMBER;
     });
   }
 
