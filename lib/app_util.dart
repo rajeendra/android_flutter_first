@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:android_flutter_first/app_model.dart' as model;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +17,60 @@ class AppUtil{
     var appConfig = await model.AppConfiguration.fromJson(config);
     return appConfig;
   }
+}
+
+Widget buildHeader(String hd) => DefaultTextStyle(
+  child: Container(
+    padding: const EdgeInsets.all(8.0),
+    color: Colors.blue,
+    alignment: Alignment.center,
+    child: Text(hd),
+  ),
+  style: TextStyle(color: Colors.white),
+);
+
+Widget app_Oops_Alert(String msg) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      buildHeader(' -- attention notification --'),
+      Expanded(
+        child: Container(
+          color: Colors.white,
+          child: Center(
+              child:
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                //crossAxisAlignment: CrossAxisAlignment.stretch,
+
+                children: <Widget>[
+                  Text('Oops!!!',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      //fontStyle: FontStyle.italic,
+                      fontSize: 30.0,
+                    ),
+                  ),
+                  Icon(
+                      Icons.add_alert,
+                      size: 80.0,
+                      color: Colors.blue
+                  ),
+                  Text(msg,
+                    style: TextStyle(
+                      //fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ],
+              )
+          ),
+        ),
+      ),
+    ],
+  );
 }
 
 // Success SnackBar

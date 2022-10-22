@@ -26,6 +26,10 @@ class Message{
   static final CHILD_1 = 'First Child Widget';
   static final CHILD_2 = 'Second Child Widget';
 
+  static final GOOGLE_SIGN_IN = '<GOOGLE_SIGN_IN>';
+
+  static final MESSAGE_OK = '<MESSAGE_OK>';
+
   String sender = '<sender>';
   String receiver = '<receiver>';
   String message = '<message>';

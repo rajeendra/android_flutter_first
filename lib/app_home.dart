@@ -3,7 +3,11 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
+// Google APIs
+import 'package:android_flutter_first/api_google_sign_in.dart' as googleAPI;
+import 'package:android_flutter_first/api_google_people.dart' as googleAPI;
 // main
 import 'package:android_flutter_first/main.dart' as main;
 // Custom widgets
@@ -46,6 +50,10 @@ class _HomePageState extends State<HomePage>{
   // Test data
   final fNms = List<String>.generate(30, (i) => "Fname$i Lname$i");
   final fAds = List<String>.generate(30, (i) => "10 Street$i City$i");
+
+  // Google SignIn
+  late googleAPI.GoogleOAuthConsentSignIn _googleOAuthConsentSignIn;
+  GoogleSignInAccount? _currentUser;
 
   bool isFAButtonVisible = true;
   int _counter = 0;
@@ -155,6 +163,7 @@ class _HomePageState extends State<HomePage>{
   }
 
   Drawer _drawer(){
+    final GoogleSignInAccount? user = _currentUser;
     return Drawer(
       // Add a ListView to the drawer. This ensures the user can scroll
       // through the options in the drawer if there isn't enough vertical
@@ -163,30 +172,64 @@ class _HomePageState extends State<HomePage>{
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
-                color: Colors.green,
-                shape: BoxShape.rectangle,
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  stops: [
-                    //0.1,
-                    //0.4,
-                    0.5,
-                    0.8,
-                  ],
-                  colors: [
-                    //Colors.yellow,
-                    //Colors.red,
-                    Colors.green,
-                    Colors.blue,
-                  ],
-                )
-
+          const SizedBox(
+            //height: 135.0,
+            height: 64.0,
+            child: DrawerHeader(
+              child: Text('Categories',
+                  style: TextStyle(color: Colors.greenAccent)),
+              decoration: BoxDecoration(color: Colors.greenAccent),
+              margin: EdgeInsets.all(0.0),
+              padding: EdgeInsets.all(0.0),
             ),
-            child: Text('Flatter learn app'),
           ),
+          (user != null)
+              ? ListTile(
+                  tileColor: Colors.greenAccent,
+                  leading: GoogleUserCircleAvatar(
+                    identity: user,
+                  ),
+                  title: Text(_currentUser?.displayName ?? ''),
+                  subtitle: Text(_currentUser?.email ?? ''),
+                )
+              : SizedBox(
+                  //height: 135.0,
+                  height: 70.0,
+                  child: DrawerHeader(
+                    child: Text('Categories',
+                        style: TextStyle(color: Colors.greenAccent)),
+                    decoration: BoxDecoration(color: Colors.greenAccent),
+                    margin: EdgeInsets.all(0.0),
+                    padding: EdgeInsets.all(0.0),
+                  ),
+                ),
+
+          // const DrawerHeader(
+          //   decoration: BoxDecoration(
+          //       color: Colors.green,
+          //       shape: BoxShape.rectangle,
+          //       gradient: LinearGradient(
+          //         begin: Alignment.topRight,
+          //         end: Alignment.bottomLeft,
+          //         stops: [
+          //           //0.1,
+          //           //0.4,
+          //           0.5,
+          //           0.8,
+          //         ],
+          //         colors: [
+          //           //Colors.yellow,
+          //           //Colors.red,
+          //           Colors.green,
+          //           Colors.blue,
+          //         ],
+          //       )
+          //
+          //   ),
+          //   child: Text('Flatter learn app'),
+          //
+          // ),
+
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
@@ -331,6 +374,34 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
+            title: const Text('Google | SignIn',
+              style: TextStyle(fontSize: 15),
+            ),
+            onTap: () {
+              setState(() {
+                selectedState = constants.STATE_GOOGLE_SIGN_IN;
+              });
+              Navigator.pop(context);
+            },
+          ),
+
+          ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
+            title: const Text('Google | People API',
+              style: TextStyle(fontSize: 15),
+            ),
+            onTap: () {
+              setState(() {
+                selectedState = constants.STATE_GOOGLE_API_PEOPLE;
+              });
+              Navigator.pop(context);
+            },
+          ),
+
+          ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
             title: const Text('Number incrementer | ..',
               style: TextStyle(fontSize: 15),
             ),
@@ -400,6 +471,23 @@ class _HomePageState extends State<HomePage>{
     }
     else if (selectedState == constants.STATE_LAYOUT_SILVERS_PAGES) {
       return _build_silvers_multiple_pages();
+    }
+    else if (selectedState == constants.STATE_GOOGLE_SIGN_IN) {
+      // Pass the _currentUser to the Google SignIn widget
+      _googleOAuthConsentSignIn = googleAPI.GoogleOAuthConsentSignIn(currentUser: _currentUser);
+      // This is to get the conformation message to parent once the Sign-in done..
+      // ..so parent can set the _currentUser
+      stream = _googleOAuthConsentSignIn.getStream();
+      streamSubscription = stream.listen((dynamic data) => respondOnMessageReceived(data));
+
+      return _googleOAuthConsentSignIn;
+    }
+    else if (selectedState == constants.STATE_GOOGLE_API_PEOPLE) {
+      Widget _result = util.app_Oops_Alert('Sigh-In required prior to use');
+      if (_currentUser != null){
+        _result = googleAPI.APIGooglePeople(currentUser: _currentUser!);
+      }
+    return _result;
     }
     else if (selectedState == constants.STATE_ERROR_UNEXPECTED) {
       return _app_Oops();
@@ -672,6 +760,13 @@ class _HomePageState extends State<HomePage>{
     Map<String,dynamic> valueMap = jsonDecode(data);
     model.Message message = model.Message.fromJson(valueMap);
     if(message.receiver==model.Message.PARENT){
+      // Message from Google SignIn on user set
+      if (message.sender == model.Message.GOOGLE_SIGN_IN &&
+          message.message == model.Message.MESSAGE_OK) {
+
+          // currentUser set in the parent state
+          _currentUser = _googleOAuthConsentSignIn.currentUser;
+      }
       setState(() {
         msg = message.message;
       });
