@@ -8,8 +8,8 @@ import 'package:android_flutter_first/app_model.dart' as model;
 import 'package:android_flutter_first/app_util.dart' as util;
 
 void mainTest(BuildContext context) async{
-  //testJSON();
-  mongoDB(context);
+  testJSON();
+  //mongoDB(context);
   //testWriteKeyValueToStorage();
 }
 
@@ -90,6 +90,8 @@ void testJSON(){
   var userD = testModel.User.fromJson(userMapB);
   // Model to String
   String jsonD = jsonEncode(userD);
+  // Map to String
+  String jsonE = jsonEncode(userMapB);
   print(jsonD);
 
 }

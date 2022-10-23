@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 // Google APIs
 import 'package:android_flutter_first/api_google_sign_in.dart' as googleAPI;
 import 'package:android_flutter_first/api_google_people.dart' as googleAPI;
+import 'package:android_flutter_first/api_google_drive.dart' as googleAPI;
 // main
 import 'package:android_flutter_first/main.dart' as main;
 // Custom widgets
@@ -384,7 +385,6 @@ class _HomePageState extends State<HomePage>{
               Navigator.pop(context);
             },
           ),
-
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
@@ -398,6 +398,20 @@ class _HomePageState extends State<HomePage>{
               Navigator.pop(context);
             },
           ),
+          ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
+            title: const Text('Google | Driver API',
+              style: TextStyle(fontSize: 15),
+            ),
+            onTap: () {
+              setState(() {
+                selectedState = constants.STATE_GOOGLE_API_DRIVER;
+              });
+              Navigator.pop(context);
+            },
+          ),
+
 
           ListTile(
             dense: true,
@@ -488,6 +502,13 @@ class _HomePageState extends State<HomePage>{
         _result = googleAPI.APIGooglePeople(currentUser: _currentUser!);
       }
     return _result;
+    }
+    else if (selectedState == constants.STATE_GOOGLE_API_DRIVER) {
+      Widget _result = util.app_Oops_Alert('Sigh-In required prior to use');
+      if (_currentUser != null){
+        _result = googleAPI.APIGoogleDrive(currentUser: _currentUser!);
+      }
+      return _result;
     }
     else if (selectedState == constants.STATE_ERROR_UNEXPECTED) {
       return _app_Oops();

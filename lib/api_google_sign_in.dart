@@ -9,7 +9,6 @@ import 'package:android_flutter_first/app_util.dart' as util;
 
 // This implemented Google SignIn together with make use of <OAuth consent screen>..
 // ..to obtain the required scope by the app, with permission by the app user
-// This make use of Google's People API to get the connections
 
 class GoogleOAuthConsentSignIn extends StatefulWidget {
   GoogleOAuthConsentSignIn({Key? key, GoogleSignInAccount? this.currentUser}) : super(key: key);
@@ -36,7 +35,8 @@ class _GoogleOAuthConsentSignInState extends State<GoogleOAuthConsentSignIn> {
     //clientId: '979898998-rk7b7sgd117iou63v24qj6ts3p9df49r.apps.googleusercontent.com',
     scopes: <String>[
       'email',
-      //'https://www.googleapis.com/auth/contacts.readonly',
+      'https://www.googleapis.com/auth/contacts.readonly',
+      'https://www.googleapis.com/auth/drive',
     ],
   );
 

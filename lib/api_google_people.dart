@@ -8,8 +8,8 @@ import 'package:http/http.dart' as http;
 // App
 import 'package:android_flutter_first/app_util.dart' as util;
 
-// This implemented Google SignIn together with make use of <OAuth consent screen>..
-// ..to obtain the required scope use in the the app, with permission by the app user
+// This integrate the app with the usage of Google's People API. Sign-in required in prior
+// Sign-in required in prior to access the scope by the app in user's space
 // API Ref: https://developers.google.com/people/api/rest/?apix=true
 
 class APIGooglePeople extends StatefulWidget {
