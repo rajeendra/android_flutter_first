@@ -456,6 +456,7 @@ class _HomePageState extends State<HomePage>{
       //return _app_contact();
       contact.Contact theContact = contact.Contact(
         title: "Contact",
+        currentUser: _currentUser!,
 
         // Setting: inter widget communication between from parent to child
         // Setting up the stream from this widget (HomePage()) to Contact() widget

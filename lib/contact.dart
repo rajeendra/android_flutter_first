@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// Google API
+import 'package:google_sign_in/google_sign_in.dart';
+
 // App
 import 'package:android_flutter_first/app_util.dart' as appUtil;
 import 'package:android_flutter_first/app_model.dart' as appModel;
@@ -12,8 +15,14 @@ import 'package:android_flutter_first/contact_service.dart' as contact;
 import 'package:android_flutter_first/contact_model.dart' as model;
 
 class Contact extends StatefulWidget {
-  Contact({Key? key, required this.title, required this.shouldTriggerChange}) : super(key: key);
+  Contact({
+    Key? key,
+    required this.title,
+    required this.shouldTriggerChange,
+    required this.currentUser,
+  }) : super(key: key);
 
+  final GoogleSignInAccount currentUser;
   final Stream shouldTriggerChange;
   final String title;
 
@@ -149,6 +158,8 @@ class _ContactState extends State<Contact> {
   //  Contacts app
   ///////////////////////////////////////////////////
 
+  String _contactsStorage = constants.MODULE_CONTACT_STORAGE_GOOGLE_DRIVE;
+  //String _contactsStorage = constants.MODULE_CONTACT_STORAGE_MONGO_ATLAS;
   List<model.Contact> contacts = [];
   List<model.Contact> contactsCopy = [];
   model.Contact? selectedContact;
@@ -225,7 +236,33 @@ class _ContactState extends State<Contact> {
   void _mongoAtlas_contacts() async{
     try {
       _app_contact_spinner_show('Loading...');
+      // _mongoAtlas specific
       contacts = await contact.findAllContacts();
+      // common to both
+      contact.cacheContacts(contacts);
+      contactsCopy = contacts.toList();
+      _app_contact_filter();
+      setState(() {
+        selectedState = constants.STATE_MODULE_CONTACT;
+      });
+      String count = contacts.length.toString();
+      appUtil.showSuccessSnackBar(context, 'Success, $count contacts fetched');
+
+    } catch (e) {
+      appUtil.showFailureSnackBar(context, 'Oh, Something has gone wrong');
+      setState(() {
+        selectedState = constants.STATE_ERROR_UNEXPECTED;
+      });
+      print(e);
+    }
+  }
+
+  void _googleDrive_contacts() async{
+    try {
+      _app_contact_spinner_show('Loading...');
+      // _googleDrive specific
+      contacts = await contact.getContactsFromGoogleDrive(widget.currentUser);
+      // common to both
       contact.cacheContacts(contacts);
       contactsCopy = contacts.toList();
       _app_contact_filter();
@@ -247,8 +284,44 @@ class _ContactState extends State<Contact> {
   void _mongoAtlas_contact_save(model.Contact oneContact) async{
     try {
       _app_contact_spinner_show('Saving...');
+      // _mongoAtlas specific
       await contact.saveContact(oneContact);
       contacts = await contact.findAllContacts();
+      // common to both
+      contact.cacheContacts(contacts);
+      contactsCopy = contacts.toList();
+      _app_contact_filter();
+      setState(() {
+        selectedState = constants.STATE_MODULE_CONTACT_ONE;
+      });
+      appUtil.showSuccessSnackBar(context, 'Success, Save done.');
+
+    } catch (e) {
+      appUtil.showFailureSnackBar(context, 'Oops! Save attempt failed.');
+      setState(() {
+        selectedState = constants.STATE_ERROR_UNEXPECTED;
+      });
+      print(e);
+    }
+  }
+
+  void _googleDrive_contact_save(model.Contact oneContact) async{
+    try {
+      _app_contact_spinner_show('Saving...');
+      // _googleDrive specific
+      // if(oneContact.id==null){
+      //   oneContact.id = 'gd${appUtil.getKey()}';
+      //   contacts.add(oneContact);
+      // }else{
+      //   for (var j = 0; j < contacts.length; j++) {
+      //     if(oneContact.id==contacts[j].id){
+      //       contacts[j] = oneContact;
+      //       break;
+      //     }
+      //   }
+      // }
+      contacts = await contact.saveContactsToGoogleDrive(oneContact, contactsCopy, widget.currentUser);
+      // common to both
       contact.cacheContacts(contacts);
       contactsCopy = contacts.toList();
       _app_contact_filter();
@@ -269,10 +342,44 @@ class _ContactState extends State<Contact> {
   void _mongoAtlas_contact_delete(String _id) async{
     try {
       _app_contact_spinner_show('Deleting...');
+      // _mongoAtlas specific
       await contact.deleteContact(_id);
       contacts = await contact.findAllContacts();
+      // common to both
       contact.cacheContacts(contacts);
       contactsCopy = contacts.toList();
+      _app_contact_filter();
+      setState(() {
+        selectedState = constants.STATE_MODULE_CONTACT;
+      });
+      appUtil.showSuccessSnackBar(context, 'Success, Delete done.');
+
+    } catch (e) {
+      appUtil.showFailureSnackBar(context, 'Oops! Delete attempt failed.');
+      setState(() {
+        selectedState = constants.STATE_ERROR_UNEXPECTED;
+      });
+      print(e);
+    }
+  }
+
+  void _googleDrive_contact_delete(String _id) async{
+    try {
+      _app_contact_spinner_show('Deleting...');
+      // _googleDrive specific
+      for (var j = 0; j < contactsCopy.length; j++) {
+        if(_id==contactsCopy[j].id){
+          contactsCopy.removeAt(j);
+          break;
+        }
+      }
+      //await contact.saveContactsToGoogleDrive(contacts, widget.currentUser);
+      contacts = await contact.saveContactsToGoogleDrive(null, contactsCopy, widget.currentUser);
+
+      // common to both
+      contact.cacheContacts(contacts);
+      contactsCopy = contacts.toList();
+      _app_contact_filter();
       setState(() {
         selectedState = constants.STATE_MODULE_CONTACT;
       });
@@ -310,7 +417,11 @@ class _ContactState extends State<Contact> {
                 icon: const Icon(Icons.sync),
                 tooltip: 'Sync',
                 onPressed: () {
-                  _mongoAtlas_contacts();
+                  if(_contactsStorage==constants.MODULE_CONTACT_STORAGE_GOOGLE_DRIVE){
+                    _googleDrive_contacts();
+                  }else{
+                    _mongoAtlas_contacts();
+                  }
                 },
               ),
               const SizedBox(
@@ -551,7 +662,11 @@ class _ContactState extends State<Contact> {
               onPressed: () {
                 Navigator.pop(context, 'OK');
                 String _id = contacts[index].id ?? '';
-                _mongoAtlas_contact_delete(_id);
+                if(_contactsStorage==constants.MODULE_CONTACT_STORAGE_GOOGLE_DRIVE){
+                  _googleDrive_contact_delete(_id);
+                }else{
+                  _mongoAtlas_contact_delete(_id);
+                }
               },
               child: const Text('OK'),
             ),
@@ -804,7 +919,11 @@ class _ContactState extends State<Contact> {
     _app_contact_one_set();
     model.Contact contact = selectedContact ?? _app_contact_new_contact();
     print('OK');
-    _mongoAtlas_contact_save(contact);
+    if(_contactsStorage==constants.MODULE_CONTACT_STORAGE_GOOGLE_DRIVE){
+      _googleDrive_contact_save(contact);
+    }else{
+      _mongoAtlas_contact_save(contact);
+    }
   }
 
   void _app_contact_one_set(){

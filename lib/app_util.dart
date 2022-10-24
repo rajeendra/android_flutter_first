@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:android_flutter_first/app_model.dart' as model;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -137,4 +138,8 @@ Future<void> sendSMS({
   );
 
   await launch(params.toString());
+}
+
+String getKey(){
+  return '${Random().nextInt(1000000000)}${Random().nextInt(1000000000)}${Random().nextInt(1000000000)}';
 }

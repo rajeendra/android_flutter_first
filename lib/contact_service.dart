@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:android_flutter_first/app_constants.dart' as constants;
@@ -9,6 +10,7 @@ import 'package:android_flutter_first/contact_model.dart' as model;
 
 var user = '<user>';
 var password = '<password>';
+String fileId = '1qm2AUpkedJ4iEL9WefrnEWYv64ipjA8L';
 
 app_setCredentials() async {
   appModel.AppConfiguration appConfiguration = await appUtil.AppUtil.getAppConfig();
@@ -140,5 +142,72 @@ Future<String> _getCachedContact() async {
 SharedPreferences prefs = await SharedPreferences.getInstance();
 String strConfig = await prefs.getString(constants.MODULE_CONTACT_CACHE) ?? '';
 return strConfig;
+}
+
+Future<List<model.Contact>> getContactsFromGoogleDrive(GoogleSignInAccount currentUser) async {
+  List<model.Contact> result;
+
+  final http.Response response = await http.get(
+    Uri.parse('https://www.googleapis.com/drive/v3/files/$fileId?alt=media'),
+    headers: await currentUser.authHeaders,
+  );
+  if (response.statusCode != 200) {
+    print('Drive API ${response.statusCode} response: ${response.body}');
+  }
+  final Map<String, dynamic> data =
+  json.decode(response.body) as Map<String, dynamic>;
+  result = _transformContacts(data);
+  return result;
+}
+
+List<model.Contact> _transformContacts(Map<String, dynamic> data) {
+  List<model.Contact> contacts = [];
+  List<dynamic> result = data['contacts'];
+  result.forEach((element) {
+    model.Contact contact = model.Contact.fromJson(element,source: 'local');
+    contacts.add(contact);
+  });
+  return contacts;
+}
+
+Future<List<model.Contact>> saveContactsToGoogleDrive(
+    model.Contact? oneContact,
+    List<model.Contact> contacts,
+    GoogleSignInAccount currentUser) async {
+  List<model.Contact> result;
+
+  if (oneContact == null){
+    // Delete contact
+  }else if(oneContact.id==null){
+    // Add contact
+    oneContact.id = 'gd${appUtil.getKey()}';
+    contacts.add(oneContact);
+  }else{
+    // Update contact
+    for (var j = 0; j < contacts.length; j++) {
+      if(oneContact.id==contacts[j].id){
+        contacts[j] = oneContact;
+        break;
+      }
+    }
+  }
+
+  Map<String,dynamic> mapContacts = Map();
+  mapContacts["contacts"] = contacts;
+  String fileContent = jsonEncode(mapContacts);
+
+  final http.Response response = await http.patch(
+    Uri.parse('https://www.googleapis.com/upload/drive/v3/files/$fileId?uploadType=media'),
+    body: fileContent,
+    headers: await currentUser.authHeaders,
+  );
+  if (response.statusCode == 200) {
+    result = await getContactsFromGoogleDrive(currentUser);
+    return result;
+  } else {
+    final Map<String, dynamic> data =
+    json.decode(response.body) as Map<String, dynamic>;
+    throw ('${data['error']['message']}');
+  }
 }
 
