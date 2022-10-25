@@ -453,23 +453,27 @@ class _HomePageState extends State<HomePage>{
       return _app_contact_config();
     }
     else if (selectedState == constants.STATE_MODULE_CONTACT) {
-      //return _app_contact();
-      contact.Contact theContact = contact.Contact(
-        title: "Contact",
-        currentUser: _currentUser!,
+      Widget _result = util.app_Oops_Alert('Sigh-In required prior to use');
+      if (_currentUser != null) {
+          //return _app_contact();
+          contact.Contact theContact = contact.Contact(
+            title: "Contact",
+            currentUser: _currentUser!,
 
-        // Setting: inter widget communication between from parent to child
-        // Setting up the stream from this widget (HomePage()) to Contact() widget
-        shouldTriggerChange: changeNotifier.stream,
-      );
+            // Setting: inter widget communication between from parent to child
+            // Setting up the stream from this widget (HomePage()) to Contact() widget
+            shouldTriggerChange: changeNotifier.stream,
+          );
 
-      // Setting: inter widget communication between from child to parent
-      // After child construction over in the parent, get the stream from child
-      // for listening by the parent's subscription
-      stream = theContact.getStream();
-      streamSubscription = stream.listen((dynamic data) => someMethod(data));
+          // Setting: inter widget communication between from child to parent
+          // After child construction over in the parent, get the stream from child
+          // for listening by the parent's subscription
+          stream = theContact.getStream();
+          streamSubscription = stream.listen((dynamic data) => someMethod(data));
 
-      return theContact;
+          _result = theContact;
+      }
+      return _result;
     }
     else if (selectedState == constants.STATE_SHARE_CONTENT) {
       return _buildShareResources();
