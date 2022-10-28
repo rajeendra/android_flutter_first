@@ -11,6 +11,8 @@ import 'package:android_flutter_first/api_google_people.dart' as googleAPI;
 import 'package:android_flutter_first/api_google_drive.dart' as googleAPI;
 // main
 import 'package:android_flutter_first/main.dart' as main;
+// Device peripherals
+import 'package:android_flutter_first/camera_image_picker.dart' as cam;
 // Custom widgets
 import 'package:android_flutter_first/app_widget_icon_favorite.dart' as cw;
 import 'package:android_flutter_first/app_widget_button.dart' as cw;
@@ -64,28 +66,6 @@ class _HomePageState extends State<HomePage>{
 
   @override
   void initState() {
-
-    if(main.isCameraEnabled) {
-      cameraController =
-          CameraController(main.cameras[0], ResolutionPreset.max);
-      cameraController.initialize().then((_) {
-        if (!mounted) {
-          return;
-        }
-        setState(() {});
-      }).catchError((Object e) {
-        if (e is CameraException) {
-          switch (e.code) {
-            case 'CameraAccessDenied':
-              print('User denied camera access.');
-              break;
-            default:
-              print('Handle other errors.');
-              break;
-          }
-        }
-      });
-    }
     super.initState();
   }
 
@@ -126,10 +106,6 @@ class _HomePageState extends State<HomePage>{
       // Broadcaster (changeNotifier) sending Stream data to subscriber
       changeNotifier.sink.add(constants.STATE_MODULE_CONTACT);
 
-    } else if(selectedState==constants.STATE_SHARE_CONTENT_CAMERA){
-      if(main.isCameraEnabled) {
-        _camera_take_picture();
-      }
     } else if(selectedState==constants.STATE_LAYOUT_SILVERS){
       setState(() {
         topIntSilvers.add(-topIntSilvers.length - 1);
@@ -411,8 +387,19 @@ class _HomePageState extends State<HomePage>{
               Navigator.pop(context);
             },
           ),
-
-
+          ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
+            title: const Text('Camera | Image picker',
+              style: TextStyle(fontSize: 15),
+            ),
+            onTap: () {
+              setState(() {
+                selectedState = constants.STATE_CAMERA_IMAGE_PICKER;
+              });
+              Navigator.pop(context);
+            },
+          ),
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
@@ -478,9 +465,6 @@ class _HomePageState extends State<HomePage>{
     else if (selectedState == constants.STATE_SHARE_CONTENT) {
       return _buildShareResources();
     }
-    else if (selectedState == constants.STATE_SHARE_CONTENT_CAMERA) {
-      return _build_camera(context);
-    }
     else if (selectedState == constants.STATE_LAYOUT_SCROLLABLE_FORM) {
       _assemble_scroll_view();
       return _build_scroll_view();
@@ -515,6 +499,9 @@ class _HomePageState extends State<HomePage>{
       }
       return _result;
     }
+    else if (selectedState == constants.STATE_CAMERA_IMAGE_PICKER) {
+      return cam.CameraImagePicker();
+    }
     else if (selectedState == constants.STATE_ERROR_UNEXPECTED) {
       return _app_Oops();
     }
@@ -524,36 +511,8 @@ class _HomePageState extends State<HomePage>{
   }
 
   ///////////////////////////////////////////////////
-  //  App | core app components
+  //  App | app core components
   ///////////////////////////////////////////////////
-
-  Widget _build_camera(BuildContext context) {
-    if (!cameraController.value.isInitialized) {
-      return Container();
-    }
-    return MaterialApp(
-      home: CameraPreview(cameraController),
-    );
-  }
-
-  void _camera_take_picture() async {
-    // Take the Picture in a try / catch block. If anything goes wrong,
-    // catch the error.
-    try {
-      // Ensure that the camera is initialized.
-      //await _initializeControllerFuture;
-
-      // Attempt to take a picture and then get the location
-      // where the image file is saved.
-      final image = await  cameraController.takePicture();
-      util.showSuccessSnackBar(context, 'Picture has been taken');
-    } catch (e) {
-      util.showFailureSnackBar(context, 'Failed to take the picture');
-      // If an error occurs, log the error to the console.
-      print(e);
-    }
-
-  }
 
   Widget _buildWidgetsFullyStretched() => Scaffold(
         backgroundColor: Color(0xFF222222),
@@ -1159,9 +1118,6 @@ class _HomePageState extends State<HomePage>{
                         minimumSize: const Size(100, 40),
                       ),
                       onPressed: () {
-                        setState(() {
-                          selectedState = constants.STATE_SHARE_CONTENT_CAMERA;
-                        });
                       },
                       child: const Text(
                         'Camera',
