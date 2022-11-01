@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+// App
 import 'package:android_flutter_first/app_home.dart' as app;
+import 'package:android_flutter_first/app_constants.dart' as constants;
 
 bool isCameraEnabled = false;
 
@@ -27,7 +29,7 @@ Widget buildMaterialApp(BuildContext context){
       // Each build() has its own Build context and the State currently its in
       // Each time you call setSate() only run the build() in the current state where the setSate() is call
 
-      home: app.HomePage(title: 'Test App', key: ValueKey<String>("wyewriyweu"))
+      home: app.HomePage(title: constants.APP_TITLE, key: ValueKey<String>("wyewriyweu"))
   );
 }
 
