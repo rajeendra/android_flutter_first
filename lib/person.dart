@@ -40,15 +40,15 @@ class _PersonState extends State<Person>{
 
   Widget _app_person(){
     return  Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      // appBar: AppBar(
+      //   title: Text(widget.title),
+      // ),
 
       body: Center(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              _buildHeader('List view - Dynamically growing'),
+              _buildHeader('Person | List view, Dynamically grow'),
               Text(
                 'Press plus button to add a new person:',
               ),
@@ -141,7 +141,7 @@ class _PersonState extends State<Person>{
 
     // After the Selection Screen returns a result, hide any previous snackbars
     // and show the new result.
-    appUtil.showSuccessSnackBar(context, ' Person $name successfully saved. ');
+    // appUtil.showSuccessSnackBar(context, ' Person $name successfully saved. ');
 
     // ScaffoldMessenger.of(context)
     //   ..removeCurrentSnackBar()

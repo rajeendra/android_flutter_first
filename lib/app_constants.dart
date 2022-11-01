@@ -1,3 +1,5 @@
+const String APP_TITLE = 'Test App';
+
 const int STATE_DEFAULT = 0;
 
 const int STATE_LAYOUT_GRID = 101;
@@ -10,6 +12,7 @@ const int STATE_MESSAGE = 210;
 const int STATE_GOOGLE_SIGN_IN = 220;
 const int STATE_GOOGLE_API_PEOPLE = 221;
 const int STATE_GOOGLE_API_DRIVER = 222;
+const int STATE_GOOGLE_API_MAP = 223;
 
 const int STATE_MODULE_PERSON = 200;
 const int STATE_MODULE_ALBUM = 300;
