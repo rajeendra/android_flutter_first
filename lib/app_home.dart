@@ -9,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:android_flutter_first/api_google_sign_in.dart' as googleAPI;
 import 'package:android_flutter_first/api_google_people.dart' as googleAPI;
 import 'package:android_flutter_first/api_google_drive.dart' as googleAPI;
+import 'package:android_flutter_first/api_google_map.dart' as googleAPI;
 // main
 import 'package:android_flutter_first/main.dart' as main;
 // Device peripherals
@@ -390,6 +391,19 @@ class _HomePageState extends State<HomePage>{
           ListTile(
             dense: true,
             visualDensity: VisualDensity(vertical: -4),
+            title: const Text('Google | Map API',
+              style: TextStyle(fontSize: 15),
+            ),
+            onTap: () async {
+              // State of main app remain the same
+              // So return to the same state once return back from the route
+              await _routeToGoogleMapScreen();
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -4),
             title: const Text('Camera | Image picker',
               style: TextStyle(fontSize: 15),
             ),
@@ -508,6 +522,23 @@ class _HomePageState extends State<HomePage>{
     else {
       return _buildNumberIncrementer();
     }
+  }
+
+  Future<void> _routeToGoogleMapScreen() async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => googleAPI.APIGoogleMap() ),
+    );
+
+    // When a BuildContext is used from a StatefulWidget, the mounted property
+    // must be checked after an asynchronous gap.
+    if (!mounted) return;
+
+    setState(() {
+      // update UI
+    });
   }
 
   ///////////////////////////////////////////////////
